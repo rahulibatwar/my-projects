@@ -3,21 +3,24 @@
 int main() {
     int age;
 
-    printf("Apni umar (Age) enter kijiye: ");
-    scanf("%d", &age); 
+    // Yeh loop exactly 3 baar chalega (i = 1, i = 2, i = 3)
+    for (int i = 1; i <= 3; i++) {
+        printf("\n--- Person Number %d ---\n", i);
+        
+        printf("Apni umar (Age) enter kijiye: ");
+        scanf("%d", &age); 
 
-    // Pehli Shart: Kya user 18 ya usse bada hai?
-    if (age >= 18) {
-        printf("Aap ek adult hain aur vote de sakte hain! \n");
-    } 
-    // Doosri Shart: Agar pehli galat hai, toh kya user 13 ya usse bada hai?
-    else if (age >= 13) {
-        printf("Aap ek teenager hain. \n");
-    } 
-    // Aakhri Rasta: Agar upar ki saari shartein galat hain
-    else {
-        printf("Aap abhi bacche hain. \n");
+        if (age >= 18) {
+            printf("Aap ek adult hain aur vote de sakte hain! \n");
+        } 
+        else if (age >= 13) {
+            printf("Aap ek teenager hain. \n");
+        } 
+        else {
+            printf("Aap abhi bacche hain. \n");
+        }
     }
 
+    printf("\nSabhi logon ka data check ho gaya! Program Khatam.\n");
     return 0;
 }
