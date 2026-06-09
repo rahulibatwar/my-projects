@@ -1,19 +1,24 @@
 #include <iostream>
 using namespace std;
 
+// 1️⃣ PARENT CLASS (Base Class)
 class Voter {
-public:
-    int age;
+protected: // protected likhne se child class is variable ko direct use kar sakti hai
+    int age; 
 
-    // 1️⃣ CONSTRUCTOR: Object bante waqt chalega
-    Voter(int initialAge) {
-        age = initialAge;
-        cout << "[Constructor]: Object created with Age: " << age << endl;
+public:
+    Voter() {
+        age = 18; // Default age
     }
 
-    // 2️⃣ DESTRUCTOR: Object destroy hote waqt automatic chalega!
-    ~Voter() {
-        cout << "[Destructor]: Memory clean up done! Object with Age " << age << " is now destroyed." << endl;
+    void setAge(int inputAge) {
+        if (inputAge > 0 && inputAge <= 120) {
+            age = inputAge;
+        }
+    }
+
+    int getAge() {
+        return age;
     }
 
     bool checkEligibility() {
@@ -21,20 +26,35 @@ public:
     }
 };
 
-int main() {
-    cout << "--- Destructor Life-Cycle Demo ---" << endl << endl;
+// 2️⃣ CHILD CLASS (Derived Class) - Syntax dhyan se dekhiye ': public Voter'
+class SpecialVoter : public Voter {
+public:
+    int specialPassID; // Child ka apna naya variable
 
-    // Hum blocks {} ka use karke ek chhota sa temporary area (scope) banayenge
-    {
-        cout << "Entering inside temporary block..." << endl;
-        Voter person1(22); 
+    void displayVIPReport() {
+        // getAge() parent ka function hai, par child ise direct use kar pa raha hai!
+        cout << "[VIP Portal]: VIP Pass ID: #" << specialPassID << " | Age: " << getAge() << endl;
         
-        if (person1.checkEligibility()) {
-            cout << "-> Person 1 eligible hai!" << endl;
+        if (checkEligibility()) {
+            cout << "-> Status: VIP Access Granted! ✅ Direct Entry Allowed." << endl;
+        } else {
+            cout << "-> Status: Access Denied! ❌ Underage VIP." << endl;
         }
-        cout << "Exiting temporary block..." << endl;
-    } // 🎯 JAISE HI YAHAN BLOCK KHATAM HOGA, person1 KI LIFE KHATAM HO JAYEGI AUR DESTRUCTOR CHALEGA!
+    }
+};
 
-    cout << endl << "Back in main function. Program ending now..." << endl;
+int main() {
+    cout << "--- OOPs Inheritance Demo ---" << endl << endl;
+
+    // Hum Parent ka nahi, balki Child Class ka object banayenge
+    SpecialVoter vipPerson;
+
+    // Child Object se Parent ke functions ko call kiya
+    vipPerson.setAge(75); 
+    vipPerson.specialPassID = 9901; // Child ka apna data
+
+    // Child ka apna function chalaya
+    vipPerson.displayVIPReport();
+
     return 0;
 }
