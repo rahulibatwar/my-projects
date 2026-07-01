@@ -1,0 +1,8 @@
+username = input("rahul ibatwar: ")
+print("Hello, " + username + "! Welcome to Python programming.")
+print("Welcome to Python Programming")
+print("This is a simple Python program.")
+print("Python is a versatile programming language.")
+print("You can use Python for web development, data analysis, artificial intelligence, and more.")
+print("Python is known for its readability and simplicity.")
+print("Let's learn Python together!") 
