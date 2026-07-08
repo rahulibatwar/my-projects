@@ -1,0 +1,16 @@
+from typing import List
+
+def process_numbers(numbers: List[int]) -> List[int]:
+    """Takes a list of integers and returns only the even numbers squared."""
+    # Using a list comprehension for clean, fast filtering
+    return [num ** 2 for num in numbers if num % 2 == 0]
+
+def main() -> None:
+    # Clean string formatting (f-string) and descriptive variables
+    data = [1, 2, 3, 4, 5, 6]
+    results = process_numbers(data)
+    print(f"Processed results: {results}")
+
+# This ensures code only runs if executed directly, not when imported
+if __name__ == "__main__":
+    main()
