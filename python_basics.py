@@ -1,13 +1,16 @@
-print("--- Python Interactive Program ---")
+print("--- Python Lists & Loops ---")
 
-# यूजर से इनपुट लेना (Python में इनपुट हमेशा स्ट्रिंग होता है, इसलिए उम्र को int() में बदला)
-user_name = input("Enter your name: ")
-user_age = int(input("Enter your age: "))
+# एक लिस्ट बनाते हैं मार्क्स की
+marks = [75, 82, 90, 45, 60]
 
-print(f"\nHello {user_name}!")
+# 1. लिस्ट में एक नया मार्क जोड़ना (C++ के push_back की तरह)
+marks.append(95)
+print(f"Updated Marks List: {marks}")
 
-# If-Else Condition
-if user_age >= 18:
-    print("You are eligible to vote! 🗳️")
-else:
-    print(f"You are minor. Wait for {18 - user_age} more years to vote.")
+# 2. लूप चलाकर चेक करना कि कौन पास हुआ (Pass mark = 50)
+print("\nStudent Results:")
+for m in marks:
+    if m >= 50:
+        print(f"Score {m}: PASSED 🎉")
+    else:
+        print(f"Score {m}: FAILED ❌")
