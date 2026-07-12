@@ -1,16 +1,17 @@
-print("--- Python Lists & Loops ---")
+print("\n--- Python Dictionary & Functions ---")
 
-# एक लिस्ट बनाते हैं मार्क्स की
-marks = [75, 82, 90, 45, 60]
+# 1. एक फ़ंक्शन बनाते हैं जो स्टूडेंट का डेटा प्रिंट करेगा
+def display_student_info(student):
+    print(f"Student Name: {student['name']}")
+    print(f"Enrollment ID: {student['id']}")
+    print(f"Technical Skills: {', '.join(student['skills'])}")
 
-# 1. लिस्ट में एक नया मार्क जोड़ना (C++ के push_back की तरह)
-marks.append(95)
-print(f"Updated Marks List: {marks}")
+# 2. एक डिक्शनरी (Key-Value) तैयार करते हैं
+student_data = {
+    "name": "Rahul",
+    "id": 101,
+    "skills": ["C++", "Data Structures", "Python"]
+}
 
-# 2. लूप चलाकर चेक करना कि कौन पास हुआ (Pass mark = 50)
-print("\nStudent Results:")
-for m in marks:
-    if m >= 50:
-        print(f"Score {m}: PASSED 🎉")
-    else:
-        print(f"Score {m}: FAILED ❌")
+# 3. फ़ंक्शन को कॉल करते हैं
+display_student_info(student_data)
