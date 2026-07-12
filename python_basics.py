@@ -1,17 +1,19 @@
-print("\n--- Python Dictionary & Functions ---")
+print("--- Python Object-Oriented Programming (OOPs) ---")
 
-# 1. एक फ़ंक्शन बनाते हैं जो स्टूडेंट का डेटा प्रिंट करेगा
-def display_student_info(student):
-    print(f"Student Name: {student['name']}")
-    print(f"Enrollment ID: {student['id']}")
-    print(f"Technical Skills: {', '.join(student['skills'])}")
+class Student:
+    # Constructor (पाइथन में इसे __init__ कहते हैं)
+    def __init__(self, name, roll_no):
+        self.name = name          # Instance Variable
+        self.roll_no = roll_no    # Instance Variable
 
-# 2. एक डिक्शनरी (Key-Value) तैयार करते हैं
-student_data = {
-    "name": "Rahul",
-    "id": 101,
-    "skills": ["C++", "Data Structures", "Python"]
-}
+    # एक सिंपल Method (फ़ंक्शन)
+    def introduce(self):
+        print(f"Hi, I am {self.name} and my Roll Number is {self.roll_no}.")
 
-# 3. फ़ंक्शन को कॉल करते हैं
-display_student_info(student_data)
+# Object बनाना (पाइथन में new कीवर्ड की कोई जरूरत नहीं होती)
+student1 = Student("Rahul", 101)
+student2 = Student("Soham", 102)
+
+# Methods को कॉल करना
+student1.introduce()
+student2.introduce()
