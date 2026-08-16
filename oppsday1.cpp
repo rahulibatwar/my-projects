@@ -3,42 +3,44 @@
 using namespace std;
 
 class teacher {
+private:
+        double salary;  
+
+
 public:
+
+        string name;
+        string subject;
+        string dept;
      // non-parameterized constructor
       teacher(){
         dept = "Computer Science";
+        salary = 0;   
       }
 
       // parameterized constructor
-      teacher(string n, string s, string d, string e, double sal) {
-        name = n;
-        subject = s;
-        dept = d;
-        email = e;
-        salary = sal;
+      teacher(string name, string subject, string dept, double salary) {
+        this->name = name;
+        this->subject = subject;
+        this->dept = dept;
+        this->salary = salary;
       } 
 
-    // properties // attributes
-      string name;
-      string subject;
-      string dept;
-      string email;
-      double salary;
       // methods // functions
       void changedept(string newdept) {
         dept = newdept;
       }
+
       void getinfo() {
         cout << "Name: " << name << endl;
         cout << "Subject: " << subject << endl;
-        cout << "Department: " << dept << endl;
-        cout << "Email: " << email << endl;
-        cout << "Salary: $" << salary << endl;
       }
-    };
+
+};
 
 int main() {
-    teacher t1("John Doe", "Data Structures", "Computer Science", "john.doe@university.edu", 75000);
+    teacher t1("John Doe", "Data Structures", "Computer Science", 75000);
     t1.getinfo();
+
     return 0;
 }
