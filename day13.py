@@ -11,3 +11,22 @@ if age >= 18:
 else:
     print("you are not eligible to enter")
 
+# multiple conditions (AND operator)
+age = int(input("Enter your age  : "))
+residence = input(" are you indian? (yes/no) : ")
+if age >= 18 and residence.lower() == "yes":
+    print(" eligible to drive")
+else:
+    print(" not eligible to drive") 
+
+##multiple conditions (OR operator)
+age = int(input("Enter your age  : "))  
+residence = input(" do you have a license? (yes/no) : ")
+if age >= 18 or residence.lower() == "yes":
+    print(" eligible to register")
+else:
+    print(" not eligible to register")
+
+
+
+
