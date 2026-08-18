@@ -1,18 +1,28 @@
 #include <iostream>
+#include <climits> // For INT_MAX and INT_MIN
 using namespace std;
 
-bool isPowerOfTwo(int n) {
-    // Condition 1: n must be greater than 0
-    // Condition 2: (n & (n - 1)) must evaluate to 0
-    return (n > 0) && ((n & (n - 1)) == 0);
+int reverseInteger(int n) {
+    int revNum = 0;
+
+    while (n != 0) {
+        int rem = n % 10;
+
+        // Overflow checks
+        if (revNum > INT_MAX / 10 || revNum < INT_MIN / 10) {
+            return 0; // Return 0 if reversing causes integer overflow
+        }
+
+        revNum = (revNum * 10) + rem;
+        n /= 10;
+    }
+
+    return revNum;
 }
 
 int main() {
-    int num = 32;
-    if (isPowerOfTwo(num)) {
-        cout << num << " is a power of 2." << endl;
-    } else {
-        cout << num << " is NOT a power of 2." << endl;
-    }
+    int num = 125;
+    cout << "Original: " << num << endl;
+    cout << "Reversed: " << reverseInteger(num) << endl; // Output: 521
     return 0;
 }
