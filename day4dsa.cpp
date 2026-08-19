@@ -2,13 +2,19 @@
 using namespace std;
 
 int main(){
-    int size = 5;
-    int marks[size];
-    for (int i=0; i<size; i++) {
-        cin >> marks [i] ;
-    }    
-    for (int i=0; i<size; i++) {
-         cout << marks [i] << endl;
-    }
+    int nums[] = {5, 44, 5, -78, -43};
+
+    int size = 6;
+
+    int smallest = INT_MAX;
+
+    for (int i=0; i<size; i++) {    
+        if(nums[i]<smallest) {
+            smallest = nums[i];
+
+        }
+    } 
+
+    cout << " smallest = " << smallest << endl;
     return 0;
 }
