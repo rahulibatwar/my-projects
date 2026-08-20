@@ -8,17 +8,21 @@ void changeArr(int arr[], int size) {
     }
 } 
 
+int linearsearch(int arr[], int sz, int target) {
+   for(int i=0; i<sz; i++){
+        if(arr[i] == target) {
+          return i;
+
+        }
+   }   
+   return -1; 
+}
 int main () {
-    int arr[] = {1, 2, 3};
+    int arr [] = {4, 6, 7, 9, 3, 10, 8};
+    int sz = 7;
+    int target = 6;
 
-    changeArr(arr,3);
-
-    cout << "in main\n";
-    for(int i = 0; i < 3; i++){
-       cout << arr[i] << " ";
-    }
-    cout << endl;
-
-     return 0;
+    cout  << linearsearch(arr, sz, target )  << endl; 
+    return 0;
 
 }
