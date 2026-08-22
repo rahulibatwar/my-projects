@@ -10,11 +10,9 @@ int main()  {
   cout << "after push back size = " << vec.size() << endl;
 
   vec.pop_back();
-  // for(int i : vec) {
-  //   cout << i << endl;
-
-  cout << vec.front() << endl; 
-  cout << vec.back() << endl;
+   cout << vec.at(0) << endl;
+   cout << vec.at(1) << endl;
+  
   
      return 0;
 }
