@@ -2,18 +2,23 @@
 #include <vector>
 using namespace std;
 
-int main (){
-    vector<int> vec;
+class solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int ans = 0;
+        for(int val : nums) {
+            ans = ans ^ val;
+        }
+        return ans;
+    }
+};
 
-    vec.push_back(0);
-    vec.push_back(1);
-    vec.push_back(2);
-    vec.push_back(3);
-    vec.push_back(4);
-
-    cout << vec.size() << endl;
-    cout << vec.capacity() << endl;
+int main() {
+    solution sol;
+    vector<int> nums = {4, 1, 2, 1, 2}; // उदाहरण के लिए एरे
+    
+    int result = sol.singleNumber(nums);
+    cout << "The single number is: " << result << endl;
+    
     return 0;
-
-
 }
