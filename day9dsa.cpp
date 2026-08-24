@@ -1,33 +1,35 @@
 #include <iostream>
 #include <vector>
-#include <climits> // INT_MIN के लिए
 
 using namespace std;
 
-class Solution {
-public:
-    int maxSubArray(vector<int>& nums) {
-        int currSum = 0;
-        int maxSum = INT_MIN;
-        
-        for(int val : nums) {
-            currSum += val;
-            maxSum = max(currSum, maxSum);
-            
-            if(currSum < 0) {
-                currSum = 0;
+vector<int> pairSum(vector<int> nums, int target) {
+    vector<int> ans;
+    int n = nums.size();
+    
+    for(int i = 0; i < n; i++) {
+        for(int j = i + 1; j < n; j++) {
+            if(nums[i] + nums[j] == target) {
+                ans.push_back(i);
+                ans.push_back(j);
+                return ans;
             }
         }
-        return maxSum;
     }
-};
+    return ans;
+}
 
 int main() {
-    Solution sol;
-    vector<int> nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    vector<int> nums = {2, 7, 11, 15};
+    int target = 9;
     
-    int result = sol.maxSubArray(nums);
-    cout << "Maximum Subarray Sum is: " << result << endl;
+    vector<int> result = pairSum(nums, target);
+    
+    if(!result.empty()) {
+        cout << "Indices found: " << result[0] << " and " << result[1] << endl;
+    } else {
+        cout << "No pair found!" << endl;
+    }
     
     return 0;
 }
