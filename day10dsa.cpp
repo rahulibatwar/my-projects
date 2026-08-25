@@ -1,44 +1,32 @@
 #include <iostream>
 #include <vector>
 #include <climits>
-#include <utility> // pair ke liye
+#include <algorithm>
 
 using namespace std;
 
-// Utility function jo maximum aur minimum subarray sum dono return karta hai
-pair<int, int> findMaxAndMinSubarraySum(const vector<int>& nums) {
-    // Variable initializations
-    int max_sum = INT_MIN, current_max = 0;
-    int min_sum = INT_MAX, current_min = 0;
+void findMaxAndMinSubarraySum(const vector<int>& nums) {
+    int max_sum = INT_MIN, curr_max = 0;
+    int min_sum = INT_MAX, curr_min = 0;
 
     for (int val : nums) {
-        // 1. Maximum Subarray Sum Logic (Kadane's Algorithm)
-        current_max += val;
-        max_sum = max(max_sum, current_max);
-        if (current_max < 0) {
-            current_max = 0;
-        }
+        // 1. Max Subarray Sum Logic
+        curr_max += val;
+        max_sum = max(max_sum, curr_max);
+        if (curr_max < 0) curr_max = 0;
 
-        // 2. Minimum Subarray Sum Logic
-        current_min += val;
-        min_sum = min(min_sum, current_min);
-        if (current_min > 0) {
-            current_min = 0;
-        }
+        // 2. Min Subarray Sum Logic
+        curr_min += val;
+        min_sum = min(min_sum, curr_min);
+        if (curr_min > 0) curr_min = 0;
     }
 
-    // pair<Max, Min> return kar rahe hain
-    return {max_sum, min_sum};
+    cout << "Maximum Subarray Sum: " << max_sum << endl;
+    cout << "Minimum Subarray Sum: " << min_sum << endl;
 }
 
 int main() {
     vector<int> nums = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
-
-    // Function call
-    pair<int, int> result = findMaxAndMinSubarraySum(nums);
-
-    cout << "Maximum Subarray Sum: " << result.first << endl;  // Output: 6
-    cout << "Minimum Subarray Sum: " << result.second << endl; // Output: -6
-
+    findMaxAndMinSubarraySum(nums);
     return 0;
 }
