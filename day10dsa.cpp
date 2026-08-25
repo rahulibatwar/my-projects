@@ -3,24 +3,24 @@
 #include <climits>
 using namespace std;
 
-int maxSubarraySum(vector<int>& nums) {
-    int max_sum = INT_MIN;
+int minSubarraySum(vector<int>& nums) {
+    int min_sum = INT_MAX;
     int current_sum = 0;
 
     for (int val : nums) {
         current_sum += val;
-        max_sum = max(max_sum, current_sum);
+        min_sum = min(min_sum, current_sum);
 
-        // Reset if sum becomes negative
-        if (current_sum < 0) {
+        // Reset if sum becomes positive
+        if (current_sum > 0) {
             current_sum = 0;
         }
     }
-    return max_sum;
+    return min_sum;
 }
 
 int main() {
-    vector<int> nums = {-2, 1, -3, -4, 8, -9, 1, 2, 1, -5, 4};
-    cout << "Maximum Subarray Sum: " << maxSubarraySum(nums) << endl; // Output: 6
+    vector<int> nums = {3, -4, 2, -3, -1, 7};
+    cout << "Minimum Subarray Sum: " << minSubarraySum(nums) << endl; // Output: -6
     return 0;
 }
