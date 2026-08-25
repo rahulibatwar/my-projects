@@ -1,23 +1,18 @@
 #include <iostream>
-#include <vector>
-#include <unordered_set>
+#include <string>
 
 using namespace std;
 
 class Solution {
 public:
-    int missingMultiple(vector<int>& nums, int k) {
-        // 
-        unordered_set<int> s(nums.begin(), nums.end());
+    bool canBeEqual(string s1, string s2) {
+        // Even indices (0 aur 2) check: Ya toh match ho ya swapping ke baad match ho
+        bool evenMatch = (s1[0] == s2[0] && s1[2] == s2[2]) || (s1[0] == s2[2] && s1[2] == s2[0]);
         
+        // Odd indices (1 aur 3) check: Ya toh match ho ya swapping ke baad match ho
+        bool oddMatch = (s1[1] == s2[1] && s1[3] == s2[3]) || (s1[1] == s2[3] && s1[3] == s2[1]);
         
-        int target = k;
-        while (s.count(target)) {
-            target += k; // Agla multiple
-        }
-        
-        // 
-        return target;
+        return evenMatch && oddMatch;
     }
 };
 
@@ -25,14 +20,12 @@ int main() {
     Solution sol;
     
     // Test Case 1
-    vector<int> nums1 = {8, 2, 3, 4, 6};
-    int k1 = 2;
-    cout << "Test Case 1 Output: " << sol.missingMultiple(nums1, k1) << " (Expected: 10)" << endl;
+    string s1_1 = "abcd", s2_1 = "cdab";
+    cout << "Test Case 1 Output: " << (sol.canBeEqual(s1_1, s2_1) ? "true" : "false") << " (Expected: true)" << endl;
 
     // Test Case 2
-    vector<int> nums2 = {1, 4, 7, 10, 15};
-    int k2 = 5;
-    cout << "Test Case 2 Output: " << sol.missingMultiple(nums2, k2) << " (Expected: 5)" << endl;
+    string s1_2 = "abcd", s2_2 = "dacb";
+    cout << "Test Case 2 Output: " << (sol.canBeEqual(s1_2, s2_2) ? "true" : "false") << " (Expected: false)" << endl;
 
     return 0;
 }
