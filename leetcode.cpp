@@ -1,31 +1,27 @@
-#include <iostream>
-#include <string>
-
-using namespace std;
-
 class Solution {
 public:
-    bool canBeEqual(string s1, string s2) {
-        // Even indices (0 aur 2) check: Ya toh match ho ya swapping ke baad match ho
-        bool evenMatch = (s1[0] == s2[0] && s1[2] == s2[2]) || (s1[0] == s2[2] && s1[2] == s2[0]);
-        
-        // Odd indices (1 aur 3) check: Ya toh match ho ya swapping ke baad match ho
-        bool oddMatch = (s1[1] == s2[1] && s1[3] == s2[3]) || (s1[1] == s2[3] && s1[3] == s2[1]);
-        
-        return evenMatch && oddMatch;
+    bool checkStrings(string s1, string s2) {
+        // Even (0, 2, 4...) aur Odd (1, 3, 5...) indices ke liye frequency tracking
+        vector<int> countEven(26, 0);
+        vector<int> countOdd(26, 0);
+
+        for (int i = 0; i < s1.length(); i++) {
+            if (i % 2 == 0) {
+                countEven[s1[i] - 'a']++;
+                countEven[s2[i] - 'a']--;
+            } else {
+                countOdd[s1[i] - 'a']++;
+                countOdd[s2[i] - 'a']--;
+            }
+        }
+
+        // Agar even aur odd positions ke characters ki count match hoti hai, to return true
+        for (int i = 0; i < 26; i++) {
+            if (countEven[i] != 0 || countOdd[i] != 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 };
-
-int main() {
-    Solution sol;
-    
-    // Test Case 1
-    string s1_1 = "abcd", s2_1 = "cdab";
-    cout << "Test Case 1 Output: " << (sol.canBeEqual(s1_1, s2_1) ? "true" : "false") << " (Expected: true)" << endl;
-
-    // Test Case 2
-    string s1_2 = "abcd", s2_2 = "dacb";
-    cout << "Test Case 2 Output: " << (sol.canBeEqual(s1_2, s2_2) ? "true" : "false") << " (Expected: false)" << endl;
-
-    return 0;
-}
