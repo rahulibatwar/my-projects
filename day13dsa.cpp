@@ -1,35 +1,37 @@
 #include <iostream>
 #include <vector>
+#include <numeric>
 #include <algorithm>
+#include <climits>
 using namespace std;
 
-// Optimized Sliding Window for non-negative integers
-int longestSubarrayWithSumK(vector<int>& nums, int k) {
-    int left = 0, right = 0;
-    int curr_sum = 0, max_len = 0;
-    int n = nums.size();
+int maxSubarraySumCircular(vector<int>& nums) {
+    int total_sum = 0;
+    int max_sum = INT_MIN, curr_max = 0;
+    int min_sum = INT_MAX, curr_min = 0;
 
-    while (right < n) {
-        curr_sum += nums[right];
+    for (int val : nums) {
+        total_sum += val;
 
-        // Shrink window if sum exceeds k
-        while (left <= right && curr_sum > k) {
-            curr_sum -= nums[left];
-            left++;
-        }
+        // Kadane's for Maximum Sum
+        curr_max += val;
+        max_sum = max(max_sum, curr_max);
+        if (curr_max < 0) curr_max = 0;
 
-        // Check if target sum is reached
-        if (curr_sum == k) {
-            max_len = max(max_len, right - left + 1);
-        }
-        right++;
+        // Kadane's for Minimum Sum
+        curr_min += val;
+        min_sum = min(min_sum, curr_min);
+        if (curr_min > 0) curr_min = 0;
     }
-    return max_len;
+
+    // Edge Case: If all numbers are negative, max_sum will be negative
+    if (max_sum < 0) return max_sum;
+
+    return max(max_sum, total_sum - min_sum);
 }
 
 int main() {
-    vector<int> nums = {10, 5, 2, 7, 1, 9};
-    int k = 15;
-    cout << "Longest Subarray Length: " << longestSubarrayWithSumK(nums, k) << endl; // Output: 4 ([5, 2, 7, 1])
+    vector<int> nums = {5, -3, 5};
+    cout << "Maximum Circular Subarray Sum: " << maxSubarraySumCircular(nums) << endl; // Output: 10 ([5] + [5])
     return 0;
 }
