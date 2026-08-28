@@ -1,51 +1,53 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
+#include <unordered_set>
 using namespace std;
 
 // 1. Brute Force Approach: O(N^2) Time, O(1) Space
-int majorityElementBrute(vector<int>& nums) {
+bool pairSumBrute(const vector<int>& nums, int target) {
     int n = nums.size();
     for (int i = 0; i < n; i++) {
-        int count = 0;
-        for (int j = 0; j < n; j++) {
-            if (nums[j] == nums[i]) count++;
+        for (int j = i + 1; j < n; j++) {
+            if (nums[i] + nums[j] == target) return true;
         }
-        if (count > n / 2) return nums[i];
     }
-    return -1;
+    return false;
 }
 
-// 2. Better Approach (Sorting): O(N log N) Time, O(1) Space
-int majorityElementBetter(vector<int> nums) {
-    sort(nums.begin(), nums.end());
-    return nums[nums.size() / 2];
-}
-
-// 3. Best Approach (Moore's Voting Algorithm): O(N) Time, O(1) Space
-int majorityElementBest(vector<int>& nums) {
-    int candidate = 0, count = 0;
-
-    // Step 1: Candidate Selection
+// 2. Better Approach (Hash Set): O(N) Time, O(N) Space
+bool pairSumBetter(const vector<int>& nums, int target) {
+    unordered_set<int> st;
     for (int num : nums) {
-        if (count == 0) {
-            candidate = num;
-        }
-        if (num == candidate) count++;
-        else count--;
+        int complement = target - num;
+        if (st.find(complement) != st.end()) return true;
+        st.insert(num);
     }
+    return false;
+}
 
-    return candidate;
+// 3. Best Approach (Two Pointer Method): O(N log N) Time, O(1) Space
+bool pairSumBest(vector<int> nums, int target) {
+    sort(nums.begin(), nums.end()); // Array ko pehle sort karenge
+    int left = 0, right = nums.size() - 1;
+
+    while (left < right) {
+        int sum = nums[left] + nums[right];
+        if (sum == target) return true;
+        else if (sum < target) left++;
+        else right--;
+    }
+    return false;
 }
 
 int main() {
-    vector<int> nums = {2, 2, 1, 1, 1, 2, 2};
+    vector<int> nums = {2, 7, 11, 15};
+    int target = 9;
 
-    cout << "--- Majority Element ---" << endl;
-    cout << "Brute Force Result: " << majorityElementBrute(nums) << endl;
-    cout << "Better (Sorting) Result: " << majorityElementBetter(nums) << endl;
-    cout << "Best (Moore's Voting) Result: " << majorityElementBest(nums) << endl;
+    cout << "--- Pair Sum ---" << endl;
+    cout << "Brute Force Result: " << (pairSumBrute(nums, target) ? "Found" : "Not Found") << endl;
+    cout << "Better (Hash Set) Result: " << (pairSumBetter(nums, target) ? "Found" : "Not Found") << endl;
+    cout << "Best (Two Pointer) Result: " << (pairSumBest(nums, target) ? "Found" : "Not Found") << endl;
 
     return 0;
 }
