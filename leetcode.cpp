@@ -1,46 +1,45 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    string longestPalindrome(string s) {
-        if (s.empty()) return "";
-        int start = 0, maxLen = 0;
+    string convert(string s, int numRows) {
+        if (numRows <= 1 || s.length() <= numRows) return s;
 
-        auto expandAroundCenter = [&](int left, int right) {
-            while (left >= 0 && right < s.length() && s[left] == s[right]) {
-                left--;
-                right++;
+        vector<string> rows(min(numRows, (int)s.length()));
+        int currRow = 0;
+        bool goingDown = false;
+
+        for (char c : s) {
+            rows[currRow] += c;
+            if (currRow == 0 || currRow == numRows - 1) {
+                goingDown = !goingDown;
             }
-            return right - left - 1;
-        };
-
-        for (int i = 0; i < s.length(); i++) {
-            int len1 = expandAroundCenter(i, i);
-            int len2 = expandAroundCenter(i, i + 1);
-            int len = max(len1, len2);
-
-            if (len > maxLen) {
-                maxLen = len;
-                start = i - (len - 1) / 2;
-            }
+            currRow += goingDown ? 1 : -1;
         }
 
-        return s.substr(start, maxLen);
+        string result = "";
+        for (string row : rows) {
+            result += row;
+        }
+        return result;
     }
 };
 
 int main() {
     Solution sol;
 
-    string s1 = "babad";
-    cout << "Test Case 1 Output: " << sol.longestPalindrome(s1) << " (Expected: bab or aba)" << endl;
+    string s1 = "PAYPALISHIRING";
+    int numRows1 = 3;
+    cout << "Test Case 1 Output: " << sol.convert(s1, numRows1) << " (Expected: PAHNAPLSIIGYIR)" << endl;
 
-    string s2 = "cbbd";
-    cout << "Test Case 2 Output: " << sol.longestPalindrome(s2) << " (Expected: bb)" << endl;
+    string s2 = "PAYPALISHIRING";
+    int numRows2 = 4;
+    cout << "Test Case 2 Output: " << sol.convert(s2, numRows2) << " (Expected: PINALSIGYAHRPI)" << endl;
 
     return 0;
 }
