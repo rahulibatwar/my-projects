@@ -1,45 +1,37 @@
 #include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
+#include <climits>
 
 using namespace std;
 
 class Solution {
 public:
-    string convert(string s, int numRows) {
-        if (numRows <= 1 || s.length() <= numRows) return s;
+    int reverse(int x) {
+        int rev = 0;
+        while (x != 0) {
+            int pop = x % 10;
+            x /= 10;
 
-        vector<string> rows(min(numRows, (int)s.length()));
-        int currRow = 0;
-        bool goingDown = false;
+            // Overflow Check
+            if (rev > INT_MAX / 10 || (rev == INT_MAX / 10 && pop > 7)) return 0;
+            if (rev < INT_MIN / 10 || (rev == INT_MIN / 10 && pop < -8)) return 0;
 
-        for (char c : s) {
-            rows[currRow] += c;
-            if (currRow == 0 || currRow == numRows - 1) {
-                goingDown = !goingDown;
-            }
-            currRow += goingDown ? 1 : -1;
+            rev = rev * 10 + pop;
         }
-
-        string result = "";
-        for (string row : rows) {
-            result += row;
-        }
-        return result;
+        return rev;
     }
 };
 
 int main() {
     Solution sol;
 
-    string s1 = "PAYPALISHIRING";
-    int numRows1 = 3;
-    cout << "Test Case 1 Output: " << sol.convert(s1, numRows1) << " (Expected: PAHNAPLSIIGYIR)" << endl;
+    int x1 = 123;
+    cout << "Test Case 1 Output: " << sol.reverse(x1) << " (Expected: 321)" << endl;
 
-    string s2 = "PAYPALISHIRING";
-    int numRows2 = 4;
-    cout << "Test Case 2 Output: " << sol.convert(s2, numRows2) << " (Expected: PINALSIGYAHRPI)" << endl;
+    int x2 = -123;
+    cout << "Test Case 2 Output: " << sol.reverse(x2) << " (Expected: -321)" << endl;
+
+    int x3 = 120;
+    cout << "Test Case 3 Output: " << sol.reverse(x3) << " (Expected: 21)" << endl;
 
     return 0;
 }
