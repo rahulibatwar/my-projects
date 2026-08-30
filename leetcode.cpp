@@ -1,52 +1,27 @@
-#include <iostream>
 #include <vector>
-#include <string>
-
-using namespace std;
+#include <algorithm>
 
 class Solution {
 public:
-    bool isMatch(string s, string p) {
-        int m = s.length();
-        int n = p.length();
+    int maxArea(std::vector<int>& height) {
+        int left = 0;
+        int right = height.size() - 1;
+        int max_water = 0;
 
-        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1, false));
-        dp[0][0] = true;
+        while (left < right) {
+            int width = right - left;
+            int current_height = std::min(height[left], height[right]);
+            int current_water = width * current_height;
 
-        for (int j = 2; j <= n; j++) {
-            if (p[j - 1] == '*') {
-                dp[0][j] = dp[0][j - 2];
+            max_water = std::max(max_water, current_water);
+
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
             }
         }
 
-        for (int i = 1; i <= m; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (p[j - 1] == s[i - 1] || p[j - 1] == '.') {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else if (p[j - 1] == '*') {
-                    dp[i][j] = dp[i][j - 2];
-                    if (p[j - 2] == s[i - 1] || p[j - 2] == '.') {
-                        dp[i][j] = dp[i][j] || dp[i - 1][j];
-                    }
-                }
-            }
-        }
-
-        return dp[m][n];
+        return max_water;
     }
 };
-
-int main() {
-    Solution sol;
-
-    string s1 = "aa", p1 = "a";
-    cout << "Test Case 1 Output: " << (sol.isMatch(s1, p1) ? "true" : "false") << " (Expected: false)" << endl;
-
-    string s2 = "aa", p2 = "a*";
-    cout << "Test Case 2 Output: " << (sol.isMatch(s2, p2) ? "true" : "false") << " (Expected: true)" << endl;
-
-    string s3 = "ab", p3 = ".*";
-    cout << "Test Case 3 Output: " << (sol.isMatch(s3, p3) ? "true" : "false") << " (Expected: true)" << endl;
-
-    return 0;
-}
