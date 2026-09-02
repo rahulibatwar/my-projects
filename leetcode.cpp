@@ -1,40 +1,60 @@
 #include <iostream>
-#include <string>
 #include <vector>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 
 class Solution {
 public:
-    int lengthOfLongestSubstring(string s) {
-        vector<int> charMap(256, -1);
-        int maxLength = 0;
-        int left = 0;
-
-        for (int right = 0; right < s.length(); right++) {
-            if (charMap[s[right]] >= left) {
-                left = charMap[s[right]] + 1;
-            }
-            charMap[s[right]] = right;
-            maxLength = max(maxLength, right - left + 1);
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        if (nums1.size() > nums2.size()) {
+            return findMedianSortedArrays(nums2, nums1);
         }
 
-        return maxLength;
+        int m = nums1.size();
+        int n = nums2.size();
+        int low = 0, high = m;
+
+        while (low <= high) {
+            int partition1 = low + (high - low) / 2;
+            int partition2 = (m + n + 1) / 2 - partition1;
+
+            int maxLeft1 = (partition1 == 0) ? INT_MIN : nums1[partition1 - 1];
+            int minRight1 = (partition1 == m) ? INT_MAX : nums1[partition1];
+
+            int maxLeft2 = (partition2 == 0) ? INT_MIN : nums2[partition2 - 1];
+            int minRight2 = (partition2 == n) ? INT_MAX : nums2[partition2];
+
+            if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1) {
+                if ((m + n) % 2 == 0) {
+                    return (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) / 2.0;
+                } else {
+                    return max(maxLeft1, maxLeft2);
+                }
+            } else if (maxLeft1 > minRight2) {
+                high = partition1 - 1;
+            } else {
+                low = partition1 + 1;
+            }
+        }
+
+        return 0.0;
     }
 };
 
 int main() {
     Solution sol;
 
-    string s1 = "abcabcbb";
-    cout << "Test Case 1 Output: " << sol.lengthOfLongestSubstring(s1) << " (Expected: 3)" << endl;
+    // Test Case 1
+    vector<int> nums1_1 = {1, 3};
+    vector<int> nums2_1 = {2};
+    cout << "Test Case 1 Output: " << sol.findMedianSortedArrays(nums1_1, nums2_1) << " (Expected: 2.0)" << endl;
 
-    string s2 = "bbbbb";
-    cout << "Test Case 2 Output: " << sol.lengthOfLongestSubstring(s2) << " (Expected: 1)" << endl;
-
-    string s3 = "pwwkew";
-    cout << "Test Case 3 Output: " << sol.lengthOfLongestSubstring(s3) << " (Expected: 3)" << endl;
+    // Test Case 2
+    vector<int> nums1_2 = {1, 2};
+    vector<int> nums2_2 = {3, 4};
+    cout << "Test Case 2 Output: " << sol.findMedianSortedArrays(nums1_2, nums2_2) << " (Expected: 2.5)" << endl;
 
     return 0;
 }
