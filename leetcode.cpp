@@ -1,60 +1,43 @@
 #include <iostream>
+#include <string>
 #include <vector>
-#include <algorithm>
-#include <climits>
 
 using namespace std;
 
 class Solution {
 public:
-    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        if (nums1.size() > nums2.size()) {
-            return findMedianSortedArrays(nums2, nums1);
-        }
+    string intToRoman(int num) {
+        vector<pair<int, string>> roman = {
+            {1000, "M"}, {900, "CM"}, {500, "D"}, {400, "CD"},
+            {100, "C"},  {90, "XC"},  {50, "L"},  {40, "XL"},
+            {10, "X"},   {9, "IX"},   {5, "V"},   {4, "IV"},
+            {1, "I"}
+        };
 
-        int m = nums1.size();
-        int n = nums2.size();
-        int low = 0, high = m;
-
-        while (low <= high) {
-            int partition1 = low + (high - low) / 2;
-            int partition2 = (m + n + 1) / 2 - partition1;
-
-            int maxLeft1 = (partition1 == 0) ? INT_MIN : nums1[partition1 - 1];
-            int minRight1 = (partition1 == m) ? INT_MAX : nums1[partition1];
-
-            int maxLeft2 = (partition2 == 0) ? INT_MIN : nums2[partition2 - 1];
-            int minRight2 = (partition2 == n) ? INT_MAX : nums2[partition2];
-
-            if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1) {
-                if ((m + n) % 2 == 0) {
-                    return (max(maxLeft1, maxLeft2) + min(minRight1, minRight2)) / 2.0;
-                } else {
-                    return max(maxLeft1, maxLeft2);
-                }
-            } else if (maxLeft1 > minRight2) {
-                high = partition1 - 1;
-            } else {
-                low = partition1 + 1;
+        string result = "";
+        for (const auto& [val, sym] : roman) {
+            while (num >= val) {
+                result += sym;
+                num -= val;
             }
         }
 
-        return 0.0;
+        return result;
     }
 };
 
 int main() {
     Solution sol;
 
-    // Test Case 1
-    vector<int> nums1_1 = {1, 3};
-    vector<int> nums2_1 = {2};
-    cout << "Test Case 1 Output: " << sol.findMedianSortedArrays(nums1_1, nums2_1) << " (Expected: 2.0)" << endl;
+    // Test Cases
+    int num1 = 3749;
+    cout << "Test Case 1 Output: " << sol.intToRoman(num1) << " (Expected: MMMDCCXLIX)" << endl;
 
-    // Test Case 2
-    vector<int> nums1_2 = {1, 2};
-    vector<int> nums2_2 = {3, 4};
-    cout << "Test Case 2 Output: " << sol.findMedianSortedArrays(nums1_2, nums2_2) << " (Expected: 2.5)" << endl;
+    int num2 = 58;
+    cout << "Test Case 2 Output: " << sol.intToRoman(num2) << " (Expected: LVIII)" << endl;
+
+    int num3 = 1994;
+    cout << "Test Case 3 Output: " << sol.intToRoman(num3) << " (Expected: MCMXCIV)" << endl;
 
     return 0;
 }
