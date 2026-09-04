@@ -1,29 +1,31 @@
 #include <iostream>
-#include <vector>
 #include <string>
-#include <algorithm>
+#include <stack>
 
 using namespace std;
 
 class Solution {
 public:
-    string longestCommonPrefix(vector<string>& strs) {
-        if (strs.empty()) return "";
+    bool isValid(string s) {
+        stack<char> st;
 
-        sort(strs.begin(), strs.end());
-
-        string first = strs[0];
-        string last = strs.back();
-        string ans = "";
-
-        for (int i = 0; i < min(first.length(), last.length()); i++) {
-            if (first[i] != last[i]) {
-                break;
+        for (char c : s) {
+            if (c == '(' || c == '{' || c == '[') {
+                st.push(c);
+            } else {
+                if (st.empty()) return false;
+                char top = st.top();
+                if ((c == ')' && top == '(') ||
+                    (c == '}' && top == '{') ||
+                    (c == ']' && top == '[')) {
+                    st.pop();
+                } else {
+                    return false;
+                }
             }
-            ans += first[i];
         }
 
-        return ans;
+        return st.empty();
     }
 };
 
@@ -31,11 +33,17 @@ int main() {
     Solution sol;
 
     // Test Cases
-    vector<string> strs1 = {"flower", "flow", "flight"};
-    cout << "Test Case 1 Output: \"" << sol.longestCommonPrefix(strs1) << "\" (Expected: \"fl\")" << endl;
+    string s1 = "()";
+    cout << "Test Case 1 Output: " << (sol.isValid(s1) ? "true" : "false") << " (Expected: true)" << endl;
 
-    vector<string> strs2 = {"dog", "racecar", "car"};
-    cout << "Test Case 2 Output: \"" << sol.longestCommonPrefix(strs2) << "\" (Expected: \"\")" << endl;
+    string s2 = "()[]{}";
+    cout << "Test Case 2 Output: " << (sol.isValid(s2) ? "true" : "false") << " (Expected: true)" << endl;
+
+    string s3 = "(]";
+    cout << "Test Case 3 Output: " << (sol.isValid(s3) ? "true" : "false") << " (Expected: false)" << endl;
+
+    string s4 = "([])";
+    cout << "Test Case 4 Output: " << (sol.isValid(s4) ? "true" : "false") << " (Expected: true)" << endl;
 
     return 0;
 }
