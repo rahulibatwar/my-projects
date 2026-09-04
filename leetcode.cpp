@@ -1,28 +1,29 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include <string>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    string intToRoman(int num) {
-        vector<pair<int, string>> roman = {
-            {1000, "M"}, {900, "CM"}, {500, "D"}, {400, "CD"},
-            {100, "C"},  {90, "XC"},  {50, "L"},  {40, "XL"},
-            {10, "X"},   {9, "IX"},   {5, "V"},   {4, "IV"},
-            {1, "I"}
-        };
+    string longestCommonPrefix(vector<string>& strs) {
+        if (strs.empty()) return "";
 
-        string result = "";
-        for (const auto& [val, sym] : roman) {
-            while (num >= val) {
-                result += sym;
-                num -= val;
+        sort(strs.begin(), strs.end());
+
+        string first = strs[0];
+        string last = strs.back();
+        string ans = "";
+
+        for (int i = 0; i < min(first.length(), last.length()); i++) {
+            if (first[i] != last[i]) {
+                break;
             }
+            ans += first[i];
         }
 
-        return result;
+        return ans;
     }
 };
 
@@ -30,14 +31,11 @@ int main() {
     Solution sol;
 
     // Test Cases
-    int num1 = 3749;
-    cout << "Test Case 1 Output: " << sol.intToRoman(num1) << " (Expected: MMMDCCXLIX)" << endl;
+    vector<string> strs1 = {"flower", "flow", "flight"};
+    cout << "Test Case 1 Output: \"" << sol.longestCommonPrefix(strs1) << "\" (Expected: \"fl\")" << endl;
 
-    int num2 = 58;
-    cout << "Test Case 2 Output: " << sol.intToRoman(num2) << " (Expected: LVIII)" << endl;
-
-    int num3 = 1994;
-    cout << "Test Case 3 Output: " << sol.intToRoman(num3) << " (Expected: MCMXCIV)" << endl;
+    vector<string> strs2 = {"dog", "racecar", "car"};
+    cout << "Test Case 2 Output: \"" << sol.longestCommonPrefix(strs2) << "\" (Expected: \"\")" << endl;
 
     return 0;
 }
