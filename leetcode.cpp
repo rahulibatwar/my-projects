@@ -1,49 +1,70 @@
 #include <iostream>
-#include <string>
-#include <stack>
+#include <initializer_list>
 
 using namespace std;
 
+// Definition for singly-linked list node
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
 class Solution {
 public:
-    bool isValid(string s) {
-        stack<char> st;
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode dummy(0);
+        ListNode* tail = &dummy;
 
-        for (char c : s) {
-            if (c == '(' || c == '{' || c == '[') {
-                st.push(c);
+        while (list1 != nullptr && list2 != nullptr) {
+            if (list1->val <= list2->val) {
+                tail->next = list1;
+                list1 = list1->next;
             } else {
-                if (st.empty()) return false;
-                char top = st.top();
-                if ((c == ')' && top == '(') ||
-                    (c == '}' && top == '{') ||
-                    (c == ']' && top == '[')) {
-                    st.pop();
-                } else {
-                    return false;
-                }
+                tail->next = list2;
+                list2 = list2->next;
             }
+            tail = tail->next;
         }
 
-        return st.empty();
+        tail->next = (list1 != nullptr) ? list1 : list2;
+
+        return dummy.next;
     }
 };
+
+// Helper function to create linked list from initializer list
+ListNode* createList(initializer_list<int> vals) {
+    ListNode dummy(0);
+    ListNode* curr = &dummy;
+    for (int val : vals) {
+        curr->next = new ListNode(val);
+        curr = curr->next;
+    }
+    return dummy.next;
+}
+
+// Helper function to print linked list
+void printList(ListNode* head) {
+    while (head != nullptr) {
+        cout << head->val << (head->next != nullptr ? " -> " : "");
+        head = head->next;
+    }
+    cout << endl;
+}
 
 int main() {
     Solution sol;
 
-    // Test Cases
-    string s1 = "()";
-    cout << "Test Case 1 Output: " << (sol.isValid(s1) ? "true" : "false") << " (Expected: true)" << endl;
+    // Test Case 1: list1 = [1, 2, 4], list2 = [1, 3, 4]
+    ListNode* l1 = createList({1, 2, 4});
+    ListNode* l2 = createList({1, 3, 4});
 
-    string s2 = "()[]{}";
-    cout << "Test Case 2 Output: " << (sol.isValid(s2) ? "true" : "false") << " (Expected: true)" << endl;
-
-    string s3 = "(]";
-    cout << "Test Case 3 Output: " << (sol.isValid(s3) ? "true" : "false") << " (Expected: false)" << endl;
-
-    string s4 = "([])";
-    cout << "Test Case 4 Output: " << (sol.isValid(s4) ? "true" : "false") << " (Expected: true)" << endl;
+    cout << "Merged Output: ";
+    ListNode* mergedHead = sol.mergeTwoLists(l1, l2);
+    printList(mergedHead); // Expected: 1 -> 1 -> 2 -> 3 -> 4 -> 4
 
     return 0;
 }
