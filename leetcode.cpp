@@ -1,36 +1,59 @@
 #include <iostream>
-#include <string>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    int strStr(string haystack, string needle) {
-        int h = haystack.length();
-        int n = needle.length();
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> result;
+        sort(nums.begin(), nums.end());
 
-        if (n > h) return -1;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] > 0) break;
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
 
-        for (int i = 0; i <= h - n; i++) {
-            if (haystack.substr(i, n) == needle) {
-                return i;
+            int left = i + 1;
+            int right = nums.size() - 1;
+
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+
+                if (sum == 0) {
+                    result.push_back({nums[i], nums[left], nums[right]});
+
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+
+                    left++;
+                    right--;
+                } else if (sum < 0) {
+                    left++;
+                } else {
+                    right--;
+                }
             }
         }
 
-        return -1;
+        return result;
     }
 };
 
 int main() {
     Solution sol;
 
-    // Test Case 1: haystack = "sadbutsad", needle = "sad" -> 0
-    string h1 = "sadbutsad", n1 = "sad";
-    cout << "Test Case 1 Output: " << sol.strStr(h1, n1) << " (Expected: 0)" << endl;
+    vector<int> nums = {-1, 0, 1, 2, -1, -4};
+    vector<vector<int>> ans = sol.threeSum(nums);
 
-    // Test Case 2: haystack = "leetcode", needle = "leeto" -> -1
-    string h2 = "leetcode", n2 = "leeto";
-    cout << "Test Case 2 Output: " << sol.strStr(h2, n2) << " (Expected: -1)" << endl;
+    cout << "Output Triplets:" << endl;
+    for (const auto& triplet : ans) {
+        cout << "[ ";
+        for (int val : triplet) {
+            cout << val << " ";
+        }
+        cout << "]" << endl;
+    }
 
     return 0;
 }
