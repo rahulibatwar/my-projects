@@ -5,48 +5,35 @@ using namespace std;
 
 class Solution {
 public:
-    bool search(vector<int>& nums, int target) {
+    int findMin(vector<int>& nums) {
         int left = 0;
         int right = nums.size() - 1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left) / 2;
 
-            if (nums[mid] == target) {
-                return true;
-            }
-
-            if (nums[left] == nums[mid] && nums[mid] == nums[right]) {
-                left++;
-                right--;
-            }
-            else if (nums[left] <= nums[mid]) {
-                if (nums[left] <= target && target < nums[mid]) {
-                    right = mid - 1;
-                } else {
-                    left = mid + 1;
-                }
-            }
-            else {
-                if (nums[mid] < target && target <= nums[right]) {
-                    left = mid + 1;
-                } else {
-                    right = mid - 1;
-                }
+            if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } else {
+                right = mid;
             }
         }
 
-        return false;
+        return nums[left];
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {2, 5, 6, 0, 0, 1, 2};
-    cout << boolalpha; // 1/0 की जगह true/false प्रिंट करने के लिए
-    cout << "Search 0: " << sol.search(nums1, 0) << " (Expected: true)" << endl;
-    cout << "Search 3: " << sol.search(nums1, 3) << " (Expected: false)" << endl;
+    vector<int> nums1 = {3, 4, 5, 1, 2};
+    cout << "Min Element: " << sol.findMin(nums1) << " (Expected: 1)" << endl;
+
+    vector<int> nums2 = {4, 5, 6, 7, 0, 1, 2};
+    cout << "Min Element: " << sol.findMin(nums2) << " (Expected: 0)" << endl;
+
+    vector<int> nums3 = {11, 13, 15, 17};
+    cout << "Min Element: " << sol.findMin(nums3) << " (Expected: 11)" << endl;
 
     return 0;
 }
