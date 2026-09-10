@@ -1,39 +1,48 @@
 #include <iostream>
-#include <vector>
+#include <queue>
 
 using namespace std;
 
-class Solution {
+class MyStack {
+private:
+    queue<int> q;
+
 public:
-    int findMin(vector<int>& nums) {
-        int left = 0;
-        int right = nums.size() - 1;
-
-        while (left < right) {
-            int mid = left + (right - left) / 2;
-
-            if (nums[mid] > nums[right]) {
-                left = mid + 1;
-            } else {
-                right = mid;
-            }
+    MyStack() {}
+    
+    void push(int x) {
+        q.push(x);
+        int n = q.size();
+        for (int i = 0; i < n - 1; i++) {
+            q.push(q.front());
+            q.pop();
         }
-
-        return nums[left];
+    }
+    
+    int pop() {
+        int val = q.front();
+        q.pop();
+        return val;
+    }
+    
+    int top() {
+        return q.front();
+    }
+    
+    bool empty() {
+        return q.empty();
     }
 };
 
 int main() {
-    Solution sol;
+    MyStack myStack;
+    myStack.push(1);
+    myStack.push(2);
 
-    vector<int> nums1 = {3, 4, 5, 1, 2};
-    cout << "Min Element: " << sol.findMin(nums1) << " (Expected: 1)" << endl;
-
-    vector<int> nums2 = {4, 5, 6, 7, 0, 1, 2};
-    cout << "Min Element: " << sol.findMin(nums2) << " (Expected: 0)" << endl;
-
-    vector<int> nums3 = {11, 13, 15, 17};
-    cout << "Min Element: " << sol.findMin(nums3) << " (Expected: 11)" << endl;
+    cout << "Top: " << myStack.top() << " (Expected: 2)" << endl;
+    cout << "Pop: " << myStack.pop() << " (Expected: 2)" << endl;
+    cout << boolalpha;
+    cout << "Is Empty: " << myStack.empty() << " (Expected: false)" << endl;
 
     return 0;
 }
