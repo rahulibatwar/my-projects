@@ -1,48 +1,55 @@
 #include <iostream>
-#include <queue>
+#include <stack>
 
 using namespace std;
 
-class MyStack {
+class MyQueue {
 private:
-    queue<int> q;
+    stack<int> in_stack;
+    stack<int> out_stack;
+
+    void transfer() {
+        if (out_stack.empty()) {
+            while (!in_stack.empty()) {
+                out_stack.push(in_stack.top());
+                in_stack.pop();
+            }
+        }
+    }
 
 public:
-    MyStack() {}
+    MyQueue() {}
     
     void push(int x) {
-        q.push(x);
-        int n = q.size();
-        for (int i = 0; i < n - 1; i++) {
-            q.push(q.front());
-            q.pop();
-        }
+        in_stack.push(x);
     }
     
     int pop() {
-        int val = q.front();
-        q.pop();
+        transfer();
+        int val = out_stack.top();
+        out_stack.pop();
         return val;
     }
     
-    int top() {
-        return q.front();
+    int peek() {
+        transfer();
+        return out_stack.top();
     }
     
     bool empty() {
-        return q.empty();
+        return in_stack.empty() && out_stack.empty();
     }
 };
 
 int main() {
-    MyStack myStack;
-    myStack.push(1);
-    myStack.push(2);
+    MyQueue myQueue;
+    myQueue.push(1);
+    myQueue.push(2);
 
-    cout << "Top: " << myStack.top() << " (Expected: 2)" << endl;
-    cout << "Pop: " << myStack.pop() << " (Expected: 2)" << endl;
+    cout << "Peek: " << myQueue.peek() << " (Expected: 1)" << endl;
+    cout << "Pop: " << myQueue.pop() << " (Expected: 1)" << endl;
     cout << boolalpha;
-    cout << "Is Empty: " << myStack.empty() << " (Expected: false)" << endl;
+    cout << "Is Empty: " << myQueue.empty() << " (Expected: false)" << endl;
 
     return 0;
 }
