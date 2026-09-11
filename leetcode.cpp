@@ -1,55 +1,37 @@
 #include <iostream>
-#include <stack>
+#include <string>
+#include <unordered_map>
 
 using namespace std;
 
-class MyQueue {
-private:
-    stack<int> in_stack;
-    stack<int> out_stack;
+class Solution {
+public:
+    int romanToInt(string s) {
+        unordered_map<char, int> m = {
+            {'I', 1}, {'V', 5}, {'X', 10}, {'L', 50},
+            {'C', 100}, {'D', 500}, {'M', 1000}
+        };
 
-    void transfer() {
-        if (out_stack.empty()) {
-            while (!in_stack.empty()) {
-                out_stack.push(in_stack.top());
-                in_stack.pop();
+        int ans = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            if (i + 1 < s.length() && m[s[i]] < m[s[i + 1]]) {
+                ans -= m[s[i]];
+            } else {
+                ans += m[s[i]];
             }
         }
-    }
 
-public:
-    MyQueue() {}
-    
-    void push(int x) {
-        in_stack.push(x);
-    }
-    
-    int pop() {
-        transfer();
-        int val = out_stack.top();
-        out_stack.pop();
-        return val;
-    }
-    
-    int peek() {
-        transfer();
-        return out_stack.top();
-    }
-    
-    bool empty() {
-        return in_stack.empty() && out_stack.empty();
+        return ans;
     }
 };
 
 int main() {
-    MyQueue myQueue;
-    myQueue.push(1);
-    myQueue.push(2);
+    Solution sol;
 
-    cout << "Peek: " << myQueue.peek() << " (Expected: 1)" << endl;
-    cout << "Pop: " << myQueue.pop() << " (Expected: 1)" << endl;
-    cout << boolalpha;
-    cout << "Is Empty: " << myQueue.empty() << " (Expected: false)" << endl;
+    cout << "III: " << sol.romanToInt("III") << " (Expected: 3)" << endl;
+    cout << "LVIII: " << sol.romanToInt("LVIII") << " (Expected: 58)" << endl;
+    cout << "MCMXCIV: " << sol.romanToInt("MCMXCIV") << " (Expected: 1994)" << endl;
 
     return 0;
 }
