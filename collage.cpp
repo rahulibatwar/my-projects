@@ -1,59 +1,46 @@
-#include<stdio.h>
-#include<stdlib.h>
-struct node
-{
-int data;
-struct node *next;
-};
-int main()
-{
-    struct node *n1, *n2,*n3,*n4, *head=NULL,*temp,*ptr,*tr;
-    n1=(struct node*)malloc(sizeof(struct node));
-    n2=(struct node*)malloc(sizeof(struct node));
-    n3=(struct node*)malloc(sizeof(struct node));
-    n4=(struct node*)malloc(sizeof(struct node));
-    n1->data=10;
-    n2->data=20;
-    n3->data=30;
-    n4->data=40;
-    n1->next=n2;
-    n2->next=n3;
-    n3->next=n4;
-    n4->next=NULL;
-    head=n1;
-    temp=head;
+#include <stdio.h>
 
-    if(head==NULL)
-    {
-        printf("empty linked list ");
-    }
-    else if(head->next==NULL)
-    {
-        free(head);
-    }
-    else
-    {
-        while(temp->next->next!=NULL)
-        {
-            temp=temp->next;
+void swap(int* a, int* b) {
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
 
+// Partition function places the pivot at its correct position
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high]; // Pivot chosen as the last element
+    int i = (low - 1);     // Index of smaller element
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
         }
-        ptr=temp->next;
-        temp->next=NULL;
-        free(ptr);
-
     }
-    tr=head;
+    swap(&arr[i + 1], &arr[high]);
+    return (i + 1); // Return pivot index
+}
 
-   if(tr!=NULL)
-    {
-    printf("After the the Last Node : ");
-    tr=head;
-    while(tr!=NULL)
-    {
-        printf("%d   ",tr->data);
-        tr=tr->next;
-    }
-    }
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
 
+        quickSort(arr, low, pi - 1);  // Before pivot
+        quickSort(arr, pi + 1, high); // After pivot
+    }
+}
+
+int main() {
+    int arr[] = {10, 80, 30, 90, 40, 50, 70};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    quickSort(arr, 0, n - 1);
+
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
 }
