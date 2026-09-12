@@ -1,37 +1,48 @@
 #include <iostream>
+#include <vector>
 #include <string>
-#include <unordered_map>
 
 using namespace std;
 
 class Solution {
-public:
-    int romanToInt(string s) {
-        unordered_map<char, int> m = {
-            {'I', 1}, {'V', 5}, {'X', 10}, {'L', 50},
-            {'C', 100}, {'D', 500}, {'M', 1000}
-        };
-
-        int ans = 0;
-
-        for (int i = 0; i < s.length(); i++) {
-            if (i + 1 < s.length() && m[s[i]] < m[s[i + 1]]) {
-                ans -= m[s[i]];
-            } else {
-                ans += m[s[i]];
-            }
+private:
+    void backtrack(const string& digits, int index, string current, 
+                   vector<string>& result, const vector<string>& keypad) {
+        if (index == digits.length()) {
+            result.push_back(current);
+            return;
         }
 
-        return ans;
+        string letters = keypad[digits[index] - '0'];
+        for (char ch : letters) {
+            backtrack(digits, index + 1, current + ch, result, keypad);
+        }
+    }
+
+public:
+    vector<string> letterCombinations(string digits) {
+        if (digits.empty()) return {};
+
+        vector<string> keypad = {
+            "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"
+        };
+
+        vector<string> result;
+        backtrack(digits, 0, "", result, keypad);
+        return result;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "III: " << sol.romanToInt("III") << " (Expected: 3)" << endl;
-    cout << "LVIII: " << sol.romanToInt("LVIII") << " (Expected: 58)" << endl;
-    cout << "MCMXCIV: " << sol.romanToInt("MCMXCIV") << " (Expected: 1994)" << endl;
+    vector<string> ans = sol.letterCombinations("23");
+
+    cout << "Combinations for '23':" << endl;
+    for (const string& s : ans) {
+        cout << s << " ";
+    }
+    cout << endl;
 
     return 0;
 }
