@@ -5,33 +5,33 @@ using namespace std;
 
 class Solution {
 public:
-    int search(vector<int>& nums, int target) {
+    char nextGreatestLetter(vector<char>& letters, char target) {
         int left = 0;
-        int right = nums.size() - 1;
+        int right = letters.size() - 1;
 
         while (left <= right) {
             int mid = left + (right - left) / 2;
 
-            if (nums[mid] == target) {
-                return mid;
-            } else if (nums[mid] < target) {
+            if (letters[mid] <= target) {
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
 
-        return -1;
+        return letters[left % letters.size()];
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums = {-1, 0, 3, 5, 9, 12};
+    vector<char> letters1 = {'c', 'f', 'j'};
+    cout << "Target 'a': " << sol.nextGreatestLetter(letters1, 'a') << " (Expected: c)" << endl;
+    cout << "Target 'c': " << sol.nextGreatestLetter(letters1, 'c') << " (Expected: f)" << endl;
 
-    cout << "Target 9 Index: " << sol.search(nums, 9) << " (Expected: 4)" << endl;
-    cout << "Target 2 Index: " << sol.search(nums, 2) << " (Expected: -1)" << endl;
+    vector<char> letters2 = {'x', 'x', 'y', 'y'};
+    cout << "Target 'z': " << sol.nextGreatestLetter(letters2, 'z') << " (Expected: x)" << endl;
 
     return 0;
 }
