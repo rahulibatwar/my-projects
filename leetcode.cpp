@@ -1,48 +1,37 @@
 #include <iostream>
 #include <vector>
-#include <string>
 
 using namespace std;
 
 class Solution {
-private:
-    void backtrack(const string& digits, int index, string current, 
-                   vector<string>& result, const vector<string>& keypad) {
-        if (index == digits.length()) {
-            result.push_back(current);
-            return;
-        }
-
-        string letters = keypad[digits[index] - '0'];
-        for (char ch : letters) {
-            backtrack(digits, index + 1, current + ch, result, keypad);
-        }
-    }
-
 public:
-    vector<string> letterCombinations(string digits) {
-        if (digits.empty()) return {};
+    int search(vector<int>& nums, int target) {
+        int left = 0;
+        int right = nums.size() - 1;
 
-        vector<string> keypad = {
-            "", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"
-        };
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
 
-        vector<string> result;
-        backtrack(digits, 0, "", result, keypad);
-        return result;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return -1;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<string> ans = sol.letterCombinations("23");
+    vector<int> nums = {-1, 0, 3, 5, 9, 12};
 
-    cout << "Combinations for '23':" << endl;
-    for (const string& s : ans) {
-        cout << s << " ";
-    }
-    cout << endl;
+    cout << "Target 9 Index: " << sol.search(nums, 9) << " (Expected: 4)" << endl;
+    cout << "Target 2 Index: " << sol.search(nums, 2) << " (Expected: -1)" << endl;
 
     return 0;
 }
