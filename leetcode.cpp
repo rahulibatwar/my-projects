@@ -1,45 +1,48 @@
 #include <iostream>
-#include <climits>
-#include <cmath>
+#include <string>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    int divide(int dividend, int divisor) {
-        if (dividend == INT_MIN && divisor == -1) {
-            return INT_MAX;
-        }
+    string multiply(string num1, string num2) {
+        if (num1 == "0" || num2 == "0") return "0";
 
-        bool isNegative = (dividend < 0) ^ (divisor < 0);
+        int m = num1.size();
+        int n = num2.size();
+        vector<int> result(m + n, 0);
 
-        long long dvd = abs((long long)dividend);
-        long long dvs = abs((long long)divisor);
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                int mul = (num1[i] - '0') * (num2[j] - '0');
+                int sum = mul + result[i + j + 1];
 
-        long long ans = 0;
-
-        while (dvd >= dvs) {
-            long long temp = dvs;
-            long long multiple = 1;
-
-            while (dvd >= (temp << 1)) {
-                temp <<= 1;
-                multiple <<= 1;
+                result[i + j + 1] = sum % 10;
+                result[i + j] += sum / 10;
             }
-
-            dvd -= temp;
-            ans += multiple;
         }
 
-        return isNegative ? -ans : ans;
+        string ans = "";
+        int idx = 0;
+        while (idx < result.size() && result[idx] == 0) {
+            idx++;
+        }
+
+        while (idx < result.size()) {
+            ans.push_back(result[idx] + '0');
+            idx++;
+        }
+
+        return ans;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "10 / 3: " << sol.divide(10, 3) << " (Expected: 3)" << endl;
-    cout << "7 / -3: " << sol.divide(7, -3) << " (Expected: -2)" << endl;
+    cout << "2 * 3 = " << sol.multiply("2", "3") << " (Expected: 6)" << endl;
+    cout << "123 * 456 = " << sol.multiply("123", "456") << " (Expected: 56088)" << endl;
 
     return 0;
 }
