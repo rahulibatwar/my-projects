@@ -1,38 +1,31 @@
 #include <iostream>
-#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    int majorityElement(vector<int>& nums) {
-        int candidate = 0;
-        int count = 0;
+    int climbStairs(int n) {
+        if (n <= 2) return n;
 
-        for (int num : nums) {
-            if (count == 0) {
-                candidate = num;
-            }
+        int prev2 = 1;
+        int prev1 = 2;
 
-            if (num == candidate) {
-                count++;
-            } else {
-                count--;
-            }
+        for (int i = 3; i <= n; i++) {
+            int curr = prev1 + prev2;
+            prev2 = prev1;
+            prev1 = curr;
         }
 
-        return candidate;
+        return prev1;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {3, 2, 3};
-    cout << "Majority: " << sol.majorityElement(nums1) << " (Expected: 3)" << endl;
-
-    vector<int> nums2 = {2, 2, 1, 1, 1, 2, 2};
-    cout << "Majority: " << sol.majorityElement(nums2) << " (Expected: 2)" << endl;
+    cout << "n = 2: " << sol.climbStairs(2) << " (Expected: 2)" << endl;
+    cout << "n = 3: " << sol.climbStairs(3) << " (Expected: 3)" << endl;
+    cout << "n = 4: " << sol.climbStairs(4) << " (Expected: 5)" << endl;
 
     return 0;
 }
