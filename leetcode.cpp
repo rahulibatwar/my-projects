@@ -1,45 +1,38 @@
 #include <iostream>
-#include <climits>
-#include <cmath>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    int divide(int dividend, int divisor) {
-        if (dividend == INT_MIN && divisor == -1) {
-            return INT_MAX;
-        }
+    int majorityElement(vector<int>& nums) {
+        int candidate = 0;
+        int count = 0;
 
-        bool isNegative = (dividend < 0) ^ (divisor < 0);
-
-        long long dvd = abs((long long)dividend);
-        long long dvs = abs((long long)divisor);
-
-        long long ans = 0;
-
-        while (dvd >= dvs) {
-            long long temp = dvs;
-            long long multiple = 1;
-
-            while (dvd >= (temp << 1)) {
-                temp <<= 1;
-                multiple <<= 1;
+        for (int num : nums) {
+            if (count == 0) {
+                candidate = num;
             }
 
-            dvd -= temp;
-            ans += multiple;
+            if (num == candidate) {
+                count++;
+            } else {
+                count--;
+            }
         }
 
-        return isNegative ? -ans : ans;
+        return candidate;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "10 / 3: " << sol.divide(10, 3) << " (Expected: 3)" << endl;
-    cout << "7 / -3: " << sol.divide(7, -3) << " (Expected: -2)" << endl;
+    vector<int> nums1 = {3, 2, 3};
+    cout << "Majority: " << sol.majorityElement(nums1) << " (Expected: 3)" << endl;
+
+    vector<int> nums2 = {2, 2, 1, 1, 1, 2, 2};
+    cout << "Majority: " << sol.majorityElement(nums2) << " (Expected: 2)" << endl;
 
     return 0;
 }
