@@ -1,39 +1,40 @@
 #include <iostream>
 using namespace std;
 
-class Employee {
-private:
-    int id;
-    char name[30];
+class person 
+{
 
-public:
-    void getData() {
-        cout << "Enter Employee ID: ";
-        cin >> id;
-        cout << "Enter Employee Name: ";
-        cin >> name;
-    }
+    protected:
+        string name;
+        int age;
+        person(string n, int a) 
+        {
 
-    void putData() {
-        cout << "ID: " << id << " | Name: " << name << endl;
-    }
+            name = n;
+            age = a;
+        }
 };
 
-int main() {
-    Employee emp[3]; // Array of 3 objects
+class student : public person
 
-    // Input data for 3 employees
-    cout << "--- Input Details ---" << endl;
-    for (int i = 0; i < 3; i++) {
-        cout << "Employee " << (i + 1) << ":" << endl;
-        emp[i].getData();
-    }
+{
+    int  rollno;
+    public:
+        student(string n, int a, int r ) : person(n, a) 
+        {
+            rollno = r;
+        }
 
-    // Display data of 3 employees
-    cout << "\n--- Display Details ---" << endl;
-    for (int i = 0; i < 3; i++) {
-        emp[i].putData();
-    }
-
+        void display() 
+        {
+            cout << "Name: " << name << endl;
+            cout << "Age: " << age << endl;
+            cout << "Roll No: " << rollno << endl;
+        }
+}; 
+int main() 
+{
+    student s("rahul", 20, 13212);
+    s.display();
     return 0;
 }
