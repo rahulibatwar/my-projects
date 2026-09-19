@@ -1,31 +1,62 @@
 #include <iostream>
+#include <vector>
+#include <numeric>
+#include <unordered_set>
 
 using namespace std;
 
 class Solution {
 public:
-    int climbStairs(int n) {
-        if (n <= 2) return n;
+    bool splitArraySameAverage(vector<int>& nums) {
+        int n = nums.size();
+        int total_sum = 0;
+        for (int x : nums) total_sum += x;
 
-        int prev2 = 1;
-        int prev1 = 2;
+        if (n <= 1) return false;
 
-        for (int i = 3; i <= n; i++) {
-            int curr = prev1 + prev2;
-            prev2 = prev1;
-            prev1 = curr;
+        int m = n / 2;
+        bool possible = false;
+        for (int k = 1; k <= m; k++) {
+            if ((total_sum * k) % n == 0) {
+                possible = true;
+                break;
+            }
+        }
+        if (!possible) return false;
+
+        vector<unordered_set<int>> dp(m + 1);
+        dp[0].insert(0);
+
+        for (int num : nums) {
+            for (int k = m; k >= 1; k--) {
+                for (int prev_sum : dp[k - 1]) {
+                    dp[k].insert(prev_sum + num);
+                }
+            }
         }
 
-        return prev1;
+        for (int k = 1; k <= m; k++) {
+            if ((total_sum * k) % n == 0) {
+                int target_sum = (total_sum * k) / n;
+                if (dp[k].count(target_sum)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "n = 2: " << sol.climbStairs(2) << " (Expected: 2)" << endl;
-    cout << "n = 3: " << sol.climbStairs(3) << " (Expected: 3)" << endl;
-    cout << "n = 4: " << sol.climbStairs(4) << " (Expected: 5)" << endl;
+    vector<int> nums1 = {1, 2, 3, 4, 5, 6, 7, 8};
+    cout << boolalpha;
+    cout << "Example 1: " << sol.splitArraySameAverage(nums1) << " (Expected: true)" << endl;
+
+    vector<int> nums2 = {3, 1};
+    cout << "Example 2: " << sol.splitArraySameAverage(nums2) << " (Expected: false)" << endl;
 
     return 0;
 }
