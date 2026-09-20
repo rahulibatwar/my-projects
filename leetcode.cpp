@@ -1,62 +1,63 @@
 #include <iostream>
 #include <vector>
-#include <numeric>
-#include <unordered_set>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    bool splitArraySameAverage(vector<int>& nums) {
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> ans;
         int n = nums.size();
-        int total_sum = 0;
-        for (int x : nums) total_sum += x;
+        if (n < 4) return ans;
 
-        if (n <= 1) return false;
+        sort(nums.begin(), nums.end());
 
-        int m = n / 2;
-        bool possible = false;
-        for (int k = 1; k <= m; k++) {
-            if ((total_sum * k) % n == 0) {
-                possible = true;
-                break;
-            }
-        }
-        if (!possible) return false;
+        for (int i = 0; i < n - 3; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
 
-        vector<unordered_set<int>> dp(m + 1);
-        dp[0].insert(0);
+            for (int j = i + 1; j < n - 2; j++) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) continue;
 
-        for (int num : nums) {
-            for (int k = m; k >= 1; k--) {
-                for (int prev_sum : dp[k - 1]) {
-                    dp[k].insert(prev_sum + num);
+                int left = j + 1;
+                int right = n - 1;
+
+                while (left < right) {
+                    long long sum = (long long)nums[i] + nums[j] + nums[left] + nums[right];
+
+                    if (sum == target) {
+                        ans.push_back({nums[i], nums[j], nums[left], nums[right]});
+
+                        while (left < right && nums[left] == nums[left + 1]) left++;
+                        while (left < right && nums[right] == nums[right - 1]) right--;
+
+                        left++;
+                        right--;
+                    } else if (sum < target) {
+                        left++;
+                    } else {
+                        right--;
+                    }
                 }
             }
         }
 
-        for (int k = 1; k <= m; k++) {
-            if ((total_sum * k) % n == 0) {
-                int target_sum = (total_sum * k) / n;
-                if (dp[k].count(target_sum)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return ans;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {1, 2, 3, 4, 5, 6, 7, 8};
-    cout << boolalpha;
-    cout << "Example 1: " << sol.splitArraySameAverage(nums1) << " (Expected: true)" << endl;
+    vector<int> nums = {1, 0, -1, 0, -2, 2};
+    vector<vector<int>> res = sol.fourSum(nums, 0);
 
-    vector<int> nums2 = {3, 1};
-    cout << "Example 2: " << sol.splitArraySameAverage(nums2) << " (Expected: false)" << endl;
+    cout << "Quadruplets for target 0:" << endl;
+    for (const auto& quad : res) {
+        cout << "[ ";
+        for (int num : quad) cout << num << " ";
+        cout << "]" << endl;
+    }
 
     return 0;
 }
