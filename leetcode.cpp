@@ -6,58 +6,38 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> fourSum(vector<int>& nums, int target) {
-        vector<vector<int>> ans;
+    int jump(vector<int>& nums) {
         int n = nums.size();
-        if (n < 4) return ans;
+        if (n <= 1) return 0;
 
-        sort(nums.begin(), nums.end());
+        int jumps = 0;
+        int current_end = 0;
+        int farthest = 0;
 
-        for (int i = 0; i < n - 3; i++) {
-            if (i > 0 && nums[i] == nums[i - 1]) continue;
+        for (int i = 0; i < n - 1; i++) {
+            farthest = max(farthest, i + nums[i]);
 
-            for (int j = i + 1; j < n - 2; j++) {
-                if (j > i + 1 && nums[j] == nums[j - 1]) continue;
-
-                int left = j + 1;
-                int right = n - 1;
-
-                while (left < right) {
-                    long long sum = (long long)nums[i] + nums[j] + nums[left] + nums[right];
-
-                    if (sum == target) {
-                        ans.push_back({nums[i], nums[j], nums[left], nums[right]});
-
-                        while (left < right && nums[left] == nums[left + 1]) left++;
-                        while (left < right && nums[right] == nums[right - 1]) right--;
-
-                        left++;
-                        right--;
-                    } else if (sum < target) {
-                        left++;
-                    } else {
-                        right--;
-                    }
+            if (i == current_end) {
+                jumps++;
+                current_end = farthest;
+                if (current_end >= n - 1) {
+                    break;
                 }
             }
         }
 
-        return ans;
+        return jumps;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums = {1, 0, -1, 0, -2, 2};
-    vector<vector<int>> res = sol.fourSum(nums, 0);
+    vector<int> nums1 = {2, 3, 1, 1, 4};
+    cout << "Example 1: " << sol.jump(nums1) << " (Expected: 2)" << endl;
 
-    cout << "Quadruplets for target 0:" << endl;
-    for (const auto& quad : res) {
-        cout << "[ ";
-        for (int num : quad) cout << num << " ";
-        cout << "]" << endl;
-    }
+    vector<int> nums2 = {2, 3, 0, 1, 4};
+    cout << "Example 2: " << sol.jump(nums2) << " (Expected: 2)" << endl;
 
     return 0;
 }
