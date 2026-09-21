@@ -1,43 +1,60 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
 
 using namespace std;
 
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
 class Solution {
 public:
-    int jump(vector<int>& nums) {
-        int n = nums.size();
-        if (n <= 1) return 0;
+    ListNode* swapPairs(ListNode* head) {
+        if (!head || !head->next) return head;
 
-        int jumps = 0;
-        int current_end = 0;
-        int farthest = 0;
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode* prev = &dummy;
 
-        for (int i = 0; i < n - 1; i++) {
-            farthest = max(farthest, i + nums[i]);
+        while (prev->next && prev->next->next) {
+            ListNode* first = prev->next;
+            ListNode* second = prev->next->next;
 
-            if (i == current_end) {
-                jumps++;
-                current_end = farthest;
-                if (current_end >= n - 1) {
-                    break;
-                }
-            }
+            first->next = second->next;
+            second->next = first;
+            prev->next = second;
+
+            prev = first;
         }
 
-        return jumps;
+        return dummy.next;
     }
 };
+
+void printList(ListNode* head) {
+    while (head) {
+        cout << head->val << " -> ";
+        head = head->next;
+    }
+    cout << "NULL" << endl;
+}
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {2, 3, 1, 1, 4};
-    cout << "Example 1: " << sol.jump(nums1) << " (Expected: 2)" << endl;
+    ListNode* head = new ListNode(1);
+    head->next = new ListNode(2);
+    head->next->next = new ListNode(3);
+    head->next->next->next = new ListNode(4);
 
-    vector<int> nums2 = {2, 3, 0, 1, 4};
-    cout << "Example 2: " << sol.jump(nums2) << " (Expected: 2)" << endl;
+    cout << "Original List: ";
+    printList(head);
+
+    ListNode* swapped = sol.swapPairs(head);
+
+    cout << "Swapped List:  ";
+    printList(swapped);
 
     return 0;
 }
