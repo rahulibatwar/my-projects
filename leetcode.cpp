@@ -1,60 +1,48 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-struct ListNode {
+struct TreeNode {
     int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(nullptr) {}
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
 };
 
 class Solution {
+private:
+    void inorder(TreeNode* node, vector<int>& result) {
+        if (!node) return;
+
+        inorder(node->left, result);
+        result.push_back(node->val);
+        inorder(node->right, result);
+    }
+
 public:
-    ListNode* swapPairs(ListNode* head) {
-        if (!head || !head->next) return head;
-
-        ListNode dummy(0);
-        dummy.next = head;
-        ListNode* prev = &dummy;
-
-        while (prev->next && prev->next->next) {
-            ListNode* first = prev->next;
-            ListNode* second = prev->next->next;
-
-            first->next = second->next;
-            second->next = first;
-            prev->next = second;
-
-            prev = first;
-        }
-
-        return dummy.next;
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> result;
+        inorder(root, result);
+        return result;
     }
 };
-
-void printList(ListNode* head) {
-    while (head) {
-        cout << head->val << " -> ";
-        head = head->next;
-    }
-    cout << "NULL" << endl;
-}
 
 int main() {
     Solution sol;
 
-    ListNode* head = new ListNode(1);
-    head->next = new ListNode(2);
-    head->next->next = new ListNode(3);
-    head->next->next->next = new ListNode(4);
+    // Example 1 ट्री बनाते हैं: 1 -> right: 2 -> left: 3
+    TreeNode* root = new TreeNode(1);
+    root->right = new TreeNode(2);
+    root->right->left = new TreeNode(3);
 
-    cout << "Original List: ";
-    printList(head);
+    vector<int> ans = sol.inorderTraversal(root);
 
-    ListNode* swapped = sol.swapPairs(head);
-
-    cout << "Swapped List:  ";
-    printList(swapped);
+    cout << "Inorder Traversal: ";
+    for (int val : ans) {
+        cout << val << " ";
+    }
+    cout << "(Expected: 1 3 2)" << endl;
 
     return 0;
 }
