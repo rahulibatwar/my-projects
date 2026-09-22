@@ -12,37 +12,45 @@ struct TreeNode {
 
 class Solution {
 private:
-    void inorder(TreeNode* node, vector<int>& result) {
-        if (!node) return;
+    vector<TreeNode*> buildTrees(int start, int end) {
+        if (start > end) {
+            return {nullptr};
+        }
 
-        inorder(node->left, result);
-        result.push_back(node->val);
-        inorder(node->right, result);
+        vector<TreeNode*> allTrees;
+
+        for (int i = start; i <= end; i++) {
+            vector<TreeNode*> leftTrees = buildTrees(start, i - 1);
+            vector<TreeNode*> rightTrees = buildTrees(i + 1, end);
+
+            for (TreeNode* l : leftTrees) {
+                for (TreeNode* r : rightTrees) {
+                    TreeNode* root = new TreeNode(i);
+                    root->left = l;
+                    root->right = r;
+                    allTrees.push_back(root);
+                }
+            }
+        }
+
+        return allTrees;
     }
 
 public:
-    vector<int> inorderTraversal(TreeNode* root) {
-        vector<int> result;
-        inorder(root, result);
-        return result;
+    vector<TreeNode*> generateTrees(int n) {
+        if (n == 0) return {};
+        return buildTrees(1, n);
     }
 };
 
 int main() {
     Solution sol;
 
-    // Example 1 ट्री बनाते हैं: 1 -> right: 2 -> left: 3
-    TreeNode* root = new TreeNode(1);
-    root->right = new TreeNode(2);
-    root->right->left = new TreeNode(3);
+    vector<TreeNode*> trees = sol.generateTrees(3);
+    cout << "Total Unique BSTs for n = 3: " << trees.size() << " (Expected: 5)" << endl;
 
-    vector<int> ans = sol.inorderTraversal(root);
-
-    cout << "Inorder Traversal: ";
-    for (int val : ans) {
-        cout << val << " ";
-    }
-    cout << "(Expected: 1 3 2)" << endl;
+    vector<TreeNode*> trees1 = sol.generateTrees(1);
+    cout << "Total Unique BSTs for n = 1: " << trees1.size() << " (Expected: 1)" << endl;
 
     return 0;
 }
