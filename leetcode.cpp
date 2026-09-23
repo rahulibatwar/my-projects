@@ -1,56 +1,40 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-};
-
 class Solution {
-private:
-    vector<TreeNode*> buildTrees(int start, int end) {
-        if (start > end) {
-            return {nullptr};
-        }
+public:
+    bool canJump(vector<int>& nums) {
+        int maxReach = 0;
+        int n = nums.size();
 
-        vector<TreeNode*> allTrees;
+        for (int i = 0; i < n; i++) {
+            if (i > maxReach) {
+                return false;
+            }
 
-        for (int i = start; i <= end; i++) {
-            vector<TreeNode*> leftTrees = buildTrees(start, i - 1);
-            vector<TreeNode*> rightTrees = buildTrees(i + 1, end);
+            maxReach = max(maxReach, i + nums[i]);
 
-            for (TreeNode* l : leftTrees) {
-                for (TreeNode* r : rightTrees) {
-                    TreeNode* root = new TreeNode(i);
-                    root->left = l;
-                    root->right = r;
-                    allTrees.push_back(root);
-                }
+            if (maxReach >= n - 1) {
+                return true;
             }
         }
 
-        return allTrees;
-    }
-
-public:
-    vector<TreeNode*> generateTrees(int n) {
-        if (n == 0) return {};
-        return buildTrees(1, n);
+        return true;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<TreeNode*> trees = sol.generateTrees(3);
-    cout << "Total Unique BSTs for n = 3: " << trees.size() << " (Expected: 5)" << endl;
+    vector<int> nums1 = {2, 3, 1, 1, 4};
+    cout << boolalpha;
+    cout << "Example 1: " << sol.canJump(nums1) << " (Expected: true)" << endl;
 
-    vector<TreeNode*> trees1 = sol.generateTrees(1);
-    cout << "Total Unique BSTs for n = 1: " << trees1.size() << " (Expected: 1)" << endl;
+    vector<int> nums2 = {3, 2, 1, 0, 4};
+    cout << "Example 2: " << sol.canJump(nums2) << " (Expected: false)" << endl;
 
     return 0;
 }
