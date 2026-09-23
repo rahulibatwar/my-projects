@@ -1,40 +1,41 @@
 #include <iostream>
-#include <vector>
+#include <string>
+#include <stack>
 #include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    bool canJump(vector<int>& nums) {
-        int maxReach = 0;
-        int n = nums.size();
+    int longestValidParentheses(string s) {
+        stack<int> st;
+        st.push(-1);
 
-        for (int i = 0; i < n; i++) {
-            if (i > maxReach) {
-                return false;
-            }
+        int maxLen = 0;
 
-            maxReach = max(maxReach, i + nums[i]);
-
-            if (maxReach >= n - 1) {
-                return true;
+        for (int i = 0; i < s.length(); i++) {
+            if (s[i] == '(') {
+                st.push(i);
+            } else {
+                st.pop();
+                if (st.empty()) {
+                    st.push(i);
+                } else {
+                    maxLen = max(maxLen, i - st.top());
+                }
             }
         }
 
-        return true;
+        return maxLen;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {2, 3, 1, 1, 4};
-    cout << boolalpha;
-    cout << "Example 1: " << sol.canJump(nums1) << " (Expected: true)" << endl;
-
-    vector<int> nums2 = {3, 2, 1, 0, 4};
-    cout << "Example 2: " << sol.canJump(nums2) << " (Expected: false)" << endl;
+    cout << "(() : " << sol.longestValidParentheses("(()") << " (Expected: 2)" << endl;
+    cout << ")()()) : " << sol.longestValidParentheses(")()())") << " (Expected: 4)" << endl;
+    cout << "Empty : " << sol.longestValidParentheses("") << " (Expected: 0)" << endl;
 
     return 0;
 }
