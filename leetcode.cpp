@@ -1,43 +1,43 @@
 #include <iostream>
 #include <vector>
-#include <queue>
+#include <string>
 
 using namespace std;
 
-class KthLargest {
+class Solution {
 private:
-    int K;
-    priority_queue<int, vector<int>, greater<int>> minHeap;
+    void backtrack(int n, int open, int close, string current, vector<string>& result) {
+        if (current.length() == 2 * n) {
+            result.push_back(current);
+            return;
+        }
 
-public:
-    KthLargest(int k, vector<int>& nums) {
-        K = k;
-        for (int num : nums) {
-            add(num);
+        if (open < n) {
+            backtrack(n, open + 1, close, current + "(", result);
+        }
+
+        if (close < open) {
+            backtrack(n, open, close + 1, current + ")", result);
         }
     }
-    
-    int add(int val) {
-        minHeap.push(val);
 
-        if (minHeap.size() > K) {
-            minHeap.pop();
-        }
-
-        return minHeap.top();
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> result;
+        backtrack(n, 0, 0, "", result);
+        return result;
     }
 };
 
 int main() {
-    vector<int> nums = {4, 5, 8, 2};
-    KthLargest* kthLargest = new KthLargest(3, nums);
+    Solution sol;
 
-    cout << "add(3): " << kthLargest->add(3) << " (Expected: 4)" << endl;
-    cout << "add(5): " << kthLargest->add(5) << " (Expected: 5)" << endl;
-    cout << "add(10): " << kthLargest->add(10) << " (Expected: 5)" << endl;
-    cout << "add(9): " << kthLargest->add(9) << " (Expected: 8)" << endl;
-    cout << "add(4): " << kthLargest->add(4) << " (Expected: 8)" << endl;
+    vector<string> ans = sol.generateParenthesis(3);
 
-    delete kthLargest;
+    cout << "Generated Parentheses for n = 3:" << endl;
+    for (const string& s : ans) {
+        cout << s << endl;
+    }
+
     return 0;
 }
