@@ -1,64 +1,55 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <queue>
 
 using namespace std;
 
-class Node {
-public:
-    int val;
-    vector<Node*> neighbors;
-    Node() : val(0), neighbors() {}
-    Node(int _val) : val(_val), neighbors() {}
-    Node(int _val, vector<Node*> _neighbors) : val(_val), neighbors(_neighbors) {}
-};
-
 class Solution {
-private:
-    unordered_map<Node*, Node*> visited;
-
-    Node* dfs(Node* node) {
-        if (!node) return nullptr;
-
-        if (visited.find(node) != visited.end()) {
-            return visited[node];
-        }
-
-        Node* clone = new Node(node->val);
-        visited[node] = clone;
-
-        for (Node* neighbor : node->neighbors) {
-            clone->neighbors.push_back(dfs(neighbor));
-        }
-
-        return clone;
-    }
-
 public:
-    Node* cloneGraph(Node* node) {
-        if (!node) return nullptr;
-        return dfs(node);
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> adj(numCourses);
+        vector<int> inDegree(numCourses, 0);
+
+        for (const auto& pre : prerequisites) {
+            adj[pre[1]].push_back(pre[0]);
+            inDegree[pre[0]]++;
+        }
+
+        queue<int> q;
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                q.push(i);
+            }
+        }
+
+        int completedCount = 0;
+
+        while (!q.empty()) {
+            int curr = q.front();
+            q.pop();
+            completedCount++;
+
+            for (int neighbor : adj[curr]) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    q.push(neighbor);
+                }
+            }
+        }
+
+        return completedCount == numCourses;
     }
 };
 
 int main() {
-    // 4 नोड्स का ग्राफ तैयार करते हैं (1-2-3-4-1 साइकिल)
-    Node* node1 = new Node(1);
-    Node* node2 = new Node(2);
-    Node* node3 = new Node(3);
-    Node* node4 = new Node(4);
-
-    node1->neighbors = {node2, node4};
-    node2->neighbors = {node1, node3};
-    node3->neighbors = {node2, node4};
-    node4->neighbors = {node1, node3};
-
     Solution sol;
-    Node* clonedRoot = sol.cloneGraph(node1);
 
-    cout << "Original Node 1 address: " << node1 << endl;
-    cout << "Cloned Node 1 address:   " << clonedRoot << " (Must be different)" << endl;
-    cout << "Cloned Node 1 value:     " << clonedRoot->val << " (Expected: 1)" << endl;
+    vector<vector<int>> pre1 = {{1, 0}};
+    cout << boolalpha;
+    cout << "Example 1: " << sol.canFinish(2, pre1) << " (Expected: true)" << endl;
+
+    vector<vector<int>> pre2 = {{1, 0}, {0, 1}};
+    cout << "Example 2: " << sol.canFinish(2, pre2) << " (Expected: false)" << endl;
 
     return 0;
 }
