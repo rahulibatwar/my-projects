@@ -1,67 +1,63 @@
 #include <iostream>
-#include <stack>
 
 using namespace std;
 
-struct TreeNode {
+struct ListNode {
     int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    ListNode *next;
+    ListNode(int x) : val(x), next(nullptr) {}
 };
 
-class BSTIterator {
-private:
-    stack<TreeNode*> st;
-
-    void pushAllLeft(TreeNode* node) {
-        while (node != nullptr) {
-            st.push(node);
-            node = node->left;
-        }
-    }
-
+class Solution {
 public:
-    BSTIterator(TreeNode* root) {
-        pushAllLeft(root);
-    }
-    
-    int next() {
-        TreeNode* topNode = st.top();
-        st.pop();
-        
-        if (topNode->right != nullptr) {
-            pushAllLeft(topNode->right);
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode dummy(0);
+        dummy.next = head;
+        ListNode* fast = &dummy;
+        ListNode* slow = &dummy;
+
+        for (int i = 0; i <= n; i++) {
+            fast = fast->next;
         }
-        
-        return topNode->val;
-    }
-    
-    bool hasNext() {
-        return !st.empty();
+
+        while (fast != nullptr) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+
+        ListNode* nodeToDelete = slow->next;
+        slow->next = slow->next->next;
+        delete nodeToDelete;
+
+        return dummy.next;
     }
 };
+
+void printList(ListNode* head) {
+    while (head) {
+        cout << head->val << " -> ";
+        head = head->next;
+    }
+    cout << "NULL" << endl;
+}
 
 int main() {
-    // Example 1 ट्री बनाते हैं
-    TreeNode* root = new TreeNode(7);
-    root->left = new TreeNode(3);
-    root->right = new TreeNode(15);
-    root->right->left = new TreeNode(9);
-    root->right->right = new TreeNode(20);
+    Solution sol;
 
-    BSTIterator* bSTIterator = new BSTIterator(root);
+    // List: 1 -> 2 -> 3 -> 4 -> 5
+    ListNode* head = new ListNode(1);
+    head->next = new ListNode(2);
+    head->next->next = new ListNode(3);
+    head->next->next->next = new ListNode(4);
+    head->next->next->next->next = new ListNode(5);
 
-    cout << bSTIterator->next() << " (Expected: 3)" << endl;
-    cout << bSTIterator->next() << " (Expected: 7)" << endl;
-    cout << boolalpha << bSTIterator->hasNext() << " (Expected: true)" << endl;
-    cout << bSTIterator->next() << " (Expected: 9)" << endl;
-    cout << boolalpha << bSTIterator->hasNext() << " (Expected: true)" << endl;
-    cout << bSTIterator->next() << " (Expected: 15)" << endl;
-    cout << boolalpha << bSTIterator->hasNext() << " (Expected: true)" << endl;
-    cout << bSTIterator->next() << " (Expected: 20)" << endl;
-    cout << boolalpha << bSTIterator->hasNext() << " (Expected: false)" << endl;
+    cout << "Original List: ";
+    printList(head);
 
-    delete bSTIterator;
+    ListNode* updated = sol.removeNthFromEnd(head, 2);
+
+    cout << "After removing 2nd from end: ";
+    printList(updated);
+
     return 0;
 }
