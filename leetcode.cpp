@@ -1,6 +1,4 @@
 #include <iostream>
-#include <vector>
-#include <queue>
 
 using namespace std;
 
@@ -10,36 +8,44 @@ struct ListNode {
     ListNode(int x) : val(x), next(nullptr) {}
 };
 
-struct CompareNode {
-    bool operator()(ListNode* a, ListNode* b) {
-        return a->val > b->val;
-    }
-};
-
 class Solution {
-public:
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<ListNode*, vector<ListNode*>, CompareNode> minHeap;
-
-        for (ListNode* head : lists) {
-            if (head != nullptr) {
-                minHeap.push(head);
-            }
+private:
+    ListNode* getKthNode(ListNode* curr, int k) {
+        while (curr != nullptr && k > 0) {
+            curr = curr->next;
+            k--;
         }
+        return curr;
+    }
+
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (!head || k <= 1) return head;
 
         ListNode dummy(0);
-        ListNode* tail = &dummy;
+        dummy.next = head;
+        ListNode* prevGroupEnd = &dummy;
 
-        while (!minHeap.empty()) {
-            ListNode* smallest = minHeap.top();
-            minHeap.pop();
-
-            tail->next = smallest;
-            tail = tail->next;
-
-            if (smallest->next != nullptr) {
-                minHeap.push(smallest->next);
+        while (true) {
+            ListNode* kthNode = getKthNode(prevGroupEnd, k);
+            if (!kthNode) {
+                break;
             }
+
+            ListNode* groupStart = prevGroupEnd->next;
+            ListNode* nextGroupStart = kthNode->next;
+
+            ListNode* prev = nextGroupStart;
+            ListNode* curr = groupStart;
+            while (curr != nextGroupStart) {
+                ListNode* temp = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = temp;
+            }
+
+            prevGroupEnd->next = kthNode;
+            prevGroupEnd = groupStart;
         }
 
         return dummy.next;
@@ -57,26 +63,20 @@ void printList(ListNode* head) {
 int main() {
     Solution sol;
 
-    // L1: 1 -> 4 -> 5
-    ListNode* l1 = new ListNode(1);
-    l1->next = new ListNode(4);
-    l1->next->next = new ListNode(5);
+    // List: 1 -> 2 -> 3 -> 4 -> 5
+    ListNode* head = new ListNode(1);
+    head->next = new ListNode(2);
+    head->next->next = new ListNode(3);
+    head->next->next->next = new ListNode(4);
+    head->next->next->next->next = new ListNode(5);
 
-    // L2: 1 -> 3 -> 4
-    ListNode* l2 = new ListNode(1);
-    l2->next = new ListNode(3);
-    l2->next->next = new ListNode(4);
+    cout << "Original List: ";
+    printList(head);
 
-    // L3: 2 -> 6
-    ListNode* l3 = new ListNode(2);
-    l3->next = new ListNode(6);
+    ListNode* modified = sol.reverseKGroup(head, 2);
 
-    vector<ListNode*> lists = {l1, l2, l3};
-
-    ListNode* merged = sol.mergeKLists(lists);
-
-    cout << "Merged List: ";
-    printList(merged);
+    cout << "Reversed in k=2 groups: ";
+    printList(modified);
 
     return 0;
 }
