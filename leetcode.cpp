@@ -1,82 +1,76 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode(int x) : val(x), next(nullptr) {}
-};
-
 class Solution {
 private:
-    ListNode* getKthNode(ListNode* curr, int k) {
-        while (curr != nullptr && k > 0) {
-            curr = curr->next;
-            k--;
+    bool isValid(vector<vector<char>>& board, int row, int col, char c) {
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == c) return false;
+            if (board[i][col] == c) return false;
+            int boxRow = 3 * (row / 3) + i / 3;
+            int boxCol = 3 * (col / 3) + i % 3;
+            if (board[boxRow][boxCol] == c) return false;
         }
-        return curr;
+        return true;
+    }
+
+    bool solve(vector<vector<char>>& board) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') {
+                    for (char c = '1'; c <= '9'; c++) {
+                        if (isValid(board, i, j, c)) {
+                            board[i][j] = c;
+                            if (solve(board)) return true;
+                            board[i][j] = '.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 public:
-    ListNode* reverseKGroup(ListNode* head, int k) {
-        if (!head || k <= 1) return head;
-
-        ListNode dummy(0);
-        dummy.next = head;
-        ListNode* prevGroupEnd = &dummy;
-
-        while (true) {
-            ListNode* kthNode = getKthNode(prevGroupEnd, k);
-            if (!kthNode) {
-                break;
-            }
-
-            ListNode* groupStart = prevGroupEnd->next;
-            ListNode* nextGroupStart = kthNode->next;
-
-            ListNode* prev = nextGroupStart;
-            ListNode* curr = groupStart;
-            while (curr != nextGroupStart) {
-                ListNode* temp = curr->next;
-                curr->next = prev;
-                prev = curr;
-                curr = temp;
-            }
-
-            prevGroupEnd->next = kthNode;
-            prevGroupEnd = groupStart;
-        }
-
-        return dummy.next;
+    void solveSudoku(vector<vector<char>>& board) {
+        solve(board);
     }
 };
 
-void printList(ListNode* head) {
-    while (head) {
-        cout << head->val << " -> ";
-        head = head->next;
+void printBoard(const vector<vector<char>>& board) {
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            cout << board[i][j] << " ";
+        }
+        cout << "\n";
     }
-    cout << "NULL" << endl;
 }
 
 int main() {
     Solution sol;
 
-    // List: 1 -> 2 -> 3 -> 4 -> 5
-    ListNode* head = new ListNode(1);
-    head->next = new ListNode(2);
-    head->next->next = new ListNode(3);
-    head->next->next->next = new ListNode(4);
-    head->next->next->next->next = new ListNode(5);
+    vector<vector<char>> board = {
+        {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+        {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+        {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+        {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+        {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+        {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+        {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+        {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+        {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
+    };
 
-    cout << "Original List: ";
-    printList(head);
+    cout << "Given Sudoku Board:\n";
+    printBoard(board);
 
-    ListNode* modified = sol.reverseKGroup(head, 2);
+    sol.solveSudoku(board);
 
-    cout << "Reversed in k=2 groups: ";
-    printList(modified);
+    cout << "\nSolved Sudoku Board:\n";
+    printBoard(board);
 
     return 0;
 }
