@@ -4,73 +4,48 @@
 using namespace std;
 
 class Solution {
-private:
-    bool isValid(vector<vector<char>>& board, int row, int col, char c) {
-        for (int i = 0; i < 9; i++) {
-            if (board[row][i] == c) return false;
-            if (board[i][col] == c) return false;
-            int boxRow = 3 * (row / 3) + i / 3;
-            int boxCol = 3 * (col / 3) + i % 3;
-            if (board[boxRow][boxCol] == c) return false;
-        }
-        return true;
-    }
+public:
+    int search(vector<int>& nums, int target) {
+        int left = 0;
+        int right = nums.size() - 1;
 
-    bool solve(vector<vector<char>>& board) {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (board[i][j] == '.') {
-                    for (char c = '1'; c <= '9'; c++) {
-                        if (isValid(board, i, j, c)) {
-                            board[i][j] = c;
-                            if (solve(board)) return true;
-                            board[i][j] = '.';
-                        }
-                    }
-                    return false;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+
+            if (nums[mid] == target) {
+                return mid;
+            }
+
+            if (nums[left] <= nums[mid]) {
+                if (target >= nums[left] && target < nums[mid]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
                 }
             }
         }
-        return true;
-    }
 
-public:
-    void solveSudoku(vector<vector<char>>& board) {
-        solve(board);
+        return -1;
     }
 };
-
-void printBoard(const vector<vector<char>>& board) {
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-            cout << board[i][j] << " ";
-        }
-        cout << "\n";
-    }
-}
 
 int main() {
     Solution sol;
 
-    vector<vector<char>> board = {
-        {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
-        {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
-        {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
-        {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
-        {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
-        {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
-        {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
-        {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
-        {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
-    };
+    vector<int> nums1 = {4, 5, 6, 7, 0, 1, 2};
+    cout << "Example 1: " << sol.search(nums1, 0) << " (Expected: 4)" << endl;
 
-    cout << "Given Sudoku Board:\n";
-    printBoard(board);
+    vector<int> nums2 = {4, 5, 6, 7, 0, 1, 2};
+    cout << "Example 2: " << sol.search(nums2, 3) << " (Expected: -1)" << endl;
 
-    sol.solveSudoku(board);
-
-    cout << "\nSolved Sudoku Board:\n";
-    printBoard(board);
+    vector<int> nums3 = {1};
+    cout << "Example 3: " << sol.search(nums3, 0) << " (Expected: -1)" << endl;
 
     return 0;
 }
