@@ -1,51 +1,49 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    int search(vector<int>& nums, int target) {
-        int left = 0;
-        int right = nums.size() - 1;
+    int trap(vector<int>& height) {
+        int n = height.size();
+        if (n <= 2) return 0;
 
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
+        int left = 0, right = n - 1;
+        int leftMax = 0, rightMax = 0;
+        int totalWater = 0;
 
-            if (nums[mid] == target) {
-                return mid;
-            }
-
-            if (nums[left] <= nums[mid]) {
-                if (target >= nums[left] && target < nums[mid]) {
-                    right = mid - 1;
+        while (left < right) {
+            if (height[left] <= height[right]) {
+                if (height[left] >= leftMax) {
+                    leftMax = height[left];
                 } else {
-                    left = mid + 1;
+                    totalWater += leftMax - height[left];
                 }
+                left++;
             } else {
-                if (target > nums[mid] && target <= nums[right]) {
-                    left = mid + 1;
+                if (height[right] >= rightMax) {
+                    rightMax = height[right];
                 } else {
-                    right = mid - 1;
+                    totalWater += rightMax - height[right];
                 }
+                right--;
             }
         }
 
-        return -1;
+        return totalWater;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {4, 5, 6, 7, 0, 1, 2};
-    cout << "Example 1: " << sol.search(nums1, 0) << " (Expected: 4)" << endl;
+    vector<int> height1 = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
+    cout << "Example 1: " << sol.trap(height1) << " (Expected: 6)" << endl;
 
-    vector<int> nums2 = {4, 5, 6, 7, 0, 1, 2};
-    cout << "Example 2: " << sol.search(nums2, 3) << " (Expected: -1)" << endl;
-
-    vector<int> nums3 = {1};
-    cout << "Example 3: " << sol.search(nums3, 0) << " (Expected: -1)" << endl;
+    vector<int> height2 = {4, 2, 0, 3, 2, 5};
+    cout << "Example 2: " << sol.trap(height2) << " (Expected: 9)" << endl;
 
     return 0;
 }
