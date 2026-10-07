@@ -1,49 +1,40 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
+#include <string>
 
 using namespace std;
 
 class Solution {
 public:
-    int trap(vector<int>& height) {
-        int n = height.size();
-        if (n <= 2) return 0;
+    string countAndSay(int n) {
+        if (n <= 0) return "";
+        string current = "1";
 
-        int left = 0, right = n - 1;
-        int leftMax = 0, rightMax = 0;
-        int totalWater = 0;
+        for (int step = 2; step <= n; step++) {
+            string nextSeq = "";
+            int len = current.length();
 
-        while (left < right) {
-            if (height[left] <= height[right]) {
-                if (height[left] >= leftMax) {
-                    leftMax = height[left];
-                } else {
-                    totalWater += leftMax - height[left];
+            for (int i = 0; i < len; i++) {
+                int count = 1;
+                while (i + 1 < len && current[i] == current[i + 1]) {
+                    count++;
+                    i++;
                 }
-                left++;
-            } else {
-                if (height[right] >= rightMax) {
-                    rightMax = height[right];
-                } else {
-                    totalWater += rightMax - height[right];
-                }
-                right--;
+                nextSeq += to_string(count);
+                nextSeq += current[i];
             }
+
+            current = nextSeq;
         }
 
-        return totalWater;
+        return current;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> height1 = {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
-    cout << "Example 1: " << sol.trap(height1) << " (Expected: 6)" << endl;
-
-    vector<int> height2 = {4, 2, 0, 3, 2, 5};
-    cout << "Example 2: " << sol.trap(height2) << " (Expected: 9)" << endl;
+    cout << "n = 1: " << sol.countAndSay(1) << " (Expected: 1)" << endl;
+    cout << "n = 4: " << sol.countAndSay(4) << " (Expected: 1211)" << endl;
 
     return 0;
 }
