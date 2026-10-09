@@ -1,50 +1,44 @@
 #include <iostream>
 #include <vector>
-#include <string>
+#include <set>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
-private:
-    void solve(int row, int n, vector<string>& board, vector<vector<string>>& result,
-               vector<bool>& cols, vector<bool>& diag1, vector<bool>& diag2) {
-        if (row == n) {
-            result.push_back(board);
-            return;
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+        vector<pair<int, int>> events;
+
+        for (const auto& b : buildings) {
+            events.push_back({b[0], -b[2]});
+            events.push_back({b[1], b[2]});
         }
 
-        for (int col = 0; col < n; col++) {
-            int d1 = row - col + (n - 1);
-            int d2 = row + col;
+        sort(events.begin(), events.end());
 
-            if (cols[col] || diag1[d1] || diag2[d2]) {
-                continue;
+        multiset<int> heights = {0};
+        vector<vector<int>> result;
+        int prevMax = 0;
+
+        for (const auto& e : events) {
+            int x = e.first;
+            int h = e.second;
+
+            if (h < 0) {
+                heights.insert(-h);
+            } else {
+                heights.erase(heights.find(h));
             }
 
-            board[row][col] = 'Q';
-            cols[col] = true;
-            diag1[d1] = true;
-            diag2[d2] = true;
+            int currentMax = *heights.rbegin();
 
-            solve(row + 1, n, board, result, cols, diag1, diag2);
-
-            board[row][col] = '.';
-            cols[col] = false;
-            diag1[d1] = false;
-            diag2[d2] = false;
+            if (currentMax != prevMax) {
+                result.push_back({x, currentMax});
+                prevMax = currentMax;
+            }
         }
-    }
 
-public:
-    vector<vector<string>> solveNQueens(int n) {
-        vector<vector<string>> result;
-        vector<string> board(n, string(n, '.'));
-
-        vector<bool> cols(n, false);
-        vector<bool> diag1(2 * n - 1, false);
-        vector<bool> diag2(2 * n - 1, false);
-
-        solve(0, n, board, result, cols, diag1, diag2);
         return result;
     }
 };
@@ -52,18 +46,17 @@ public:
 int main() {
     Solution sol;
 
-    int n = 4;
-    vector<vector<string>> solutions = sol.solveNQueens(n);
+    vector<vector<int>> buildings = {
+        {2, 9, 10}, {3, 7, 15}, {5, 12, 12}, {15, 20, 10}, {19, 24, 8}
+    };
 
-    cout << "Total distinct solutions for n = " << n << ": " << solutions.size() << " (Expected: 2)\n\n";
+    vector<vector<int>> skyline = sol.getSkyline(buildings);
 
-    for (int i = 0; i < solutions.size(); i++) {
-        cout << "Solution " << i + 1 << ":\n";
-        for (const string& row : solutions[i]) {
-            cout << row << "\n";
-        }
-        cout << "\n";
+    cout << "Skyline Key Points:\n";
+    for (const auto& pt : skyline) {
+        cout << "[" << pt[0] << ", " << pt[1] << "] ";
     }
+    cout << "\n";
 
     return 0;
 }
