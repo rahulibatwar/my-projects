@@ -1,44 +1,28 @@
 #include <iostream>
 #include <vector>
-#include <set>
 #include <algorithm>
 
 using namespace std;
 
 class Solution {
+private:
+    void backtrack(int start, vector<int>& nums, vector<vector<int>>& result) {
+        if (start == nums.size()) {
+            result.push_back(nums);
+            return;
+        }
+
+        for (int i = start; i < nums.size(); i++) {
+            swap(nums[start], nums[i]);
+            backtrack(start + 1, nums, result);
+            swap(nums[start], nums[i]);
+        }
+    }
+
 public:
-    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
-        vector<pair<int, int>> events;
-
-        for (const auto& b : buildings) {
-            events.push_back({b[0], -b[2]});
-            events.push_back({b[1], b[2]});
-        }
-
-        sort(events.begin(), events.end());
-
-        multiset<int> heights = {0};
+    vector<vector<int>> permute(vector<int>& nums) {
         vector<vector<int>> result;
-        int prevMax = 0;
-
-        for (const auto& e : events) {
-            int x = e.first;
-            int h = e.second;
-
-            if (h < 0) {
-                heights.insert(-h);
-            } else {
-                heights.erase(heights.find(h));
-            }
-
-            int currentMax = *heights.rbegin();
-
-            if (currentMax != prevMax) {
-                result.push_back({x, currentMax});
-                prevMax = currentMax;
-            }
-        }
-
+        backtrack(0, nums, result);
         return result;
     }
 };
@@ -46,17 +30,15 @@ public:
 int main() {
     Solution sol;
 
-    vector<vector<int>> buildings = {
-        {2, 9, 10}, {3, 7, 15}, {5, 12, 12}, {15, 20, 10}, {19, 24, 8}
-    };
+    vector<int> nums = {1, 2, 3};
+    vector<vector<int>> perms = sol.permute(nums);
 
-    vector<vector<int>> skyline = sol.getSkyline(buildings);
-
-    cout << "Skyline Key Points:\n";
-    for (const auto& pt : skyline) {
-        cout << "[" << pt[0] << ", " << pt[1] << "] ";
+    cout << "Total Permutations: " << perms.size() << " (Expected: 6)\n";
+    for (const auto& p : perms) {
+        cout << "[ ";
+        for (int x : p) cout << x << " ";
+        cout << "]\n";
     }
-    cout << "\n";
 
     return 0;
 }
