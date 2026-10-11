@@ -6,23 +6,32 @@ using namespace std;
 
 class Solution {
 private:
-    void backtrack(int start, vector<int>& nums, vector<vector<int>>& result) {
-        if (start == nums.size()) {
-            result.push_back(nums);
+    void backtrack(int start, int target, vector<int>& candidates, 
+                   vector<int>& current, vector<vector<int>>& result) {
+        if (target == 0) {
+            result.push_back(current);
             return;
         }
 
-        for (int i = start; i < nums.size(); i++) {
-            swap(nums[start], nums[i]);
-            backtrack(start + 1, nums, result);
-            swap(nums[start], nums[i]);
+        for (int i = start; i < candidates.size(); i++) {
+            if (candidates[i] > target) {
+                break;
+            }
+
+            current.push_back(candidates[i]);
+            backtrack(i, target - candidates[i], candidates, current, result);
+            current.pop_back();
         }
     }
 
 public:
-    vector<vector<int>> permute(vector<int>& nums) {
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         vector<vector<int>> result;
-        backtrack(0, nums, result);
+        vector<int> current;
+
+        sort(candidates.begin(), candidates.end());
+
+        backtrack(0, target, candidates, current, result);
         return result;
     }
 };
@@ -30,13 +39,14 @@ public:
 int main() {
     Solution sol;
 
-    vector<int> nums = {1, 2, 3};
-    vector<vector<int>> perms = sol.permute(nums);
+    vector<int> candidates1 = {2, 3, 6, 7};
+    int target1 = 7;
+    vector<vector<int>> res1 = sol.combinationSum(candidates1, target1);
 
-    cout << "Total Permutations: " << perms.size() << " (Expected: 6)\n";
-    for (const auto& p : perms) {
+    cout << "Combinations for target = 7:\n";
+    for (const auto& comb : res1) {
         cout << "[ ";
-        for (int x : p) cout << x << " ";
+        for (int x : comb) cout << x << " ";
         cout << "]\n";
     }
 
