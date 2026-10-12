@@ -5,50 +5,50 @@
 using namespace std;
 
 class Solution {
-private:
-    void backtrack(int start, int target, vector<int>& candidates, 
-                   vector<int>& current, vector<vector<int>>& result) {
-        if (target == 0) {
-            result.push_back(current);
-            return;
-        }
-
-        for (int i = start; i < candidates.size(); i++) {
-            if (candidates[i] > target) {
-                break;
-            }
-
-            current.push_back(candidates[i]);
-            backtrack(i, target - candidates[i], candidates, current, result);
-            current.pop_back();
-        }
-    }
-
 public:
-    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> result;
-        vector<int> current;
+    void nextPermutation(vector<int>& nums) {
+        int n = nums.size();
+        int i = n - 2;
 
-        sort(candidates.begin(), candidates.end());
+        while (i >= 0 && nums[i] >= nums[i + 1]) {
+            i--;
+        }
 
-        backtrack(0, target, candidates, current, result);
-        return result;
+        if (i >= 0) {
+            int j = n - 1;
+            while (nums[j] <= nums[i]) {
+                j--;
+            }
+            swap(nums[i], nums[j]);
+        }
+
+        reverse(nums.begin() + i + 1, nums.end());
     }
 };
+
+void printVector(const vector<int>& v) {
+    cout << "[ ";
+    for (int x : v) cout << x << " ";
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    vector<int> candidates1 = {2, 3, 6, 7};
-    int target1 = 7;
-    vector<vector<int>> res1 = sol.combinationSum(candidates1, target1);
+    vector<int> nums1 = {1, 2, 3};
+    sol.nextPermutation(nums1);
+    cout << "Example 1: ";
+    printVector(nums1); // Expected: [ 1 3 2 ]
 
-    cout << "Combinations for target = 7:\n";
-    for (const auto& comb : res1) {
-        cout << "[ ";
-        for (int x : comb) cout << x << " ";
-        cout << "]\n";
-    }
+    vector<int> nums2 = {3, 2, 1};
+    sol.nextPermutation(nums2);
+    cout << "Example 2: ";
+    printVector(nums2); // Expected: [ 1 2 3 ]
+
+    vector<int> nums3 = {1, 1, 5};
+    sol.nextPermutation(nums3);
+    cout << "Example 3: ";
+    printVector(nums3); // Expected: [ 1 5 1 ]
 
     return 0;
 }
