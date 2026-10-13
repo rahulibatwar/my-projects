@@ -1,54 +1,55 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
 class Solution {
-public:
-    void nextPermutation(vector<int>& nums) {
-        int n = nums.size();
-        int i = n - 2;
+private:
+    int count = 0;
 
-        while (i >= 0 && nums[i] >= nums[i + 1]) {
-            i--;
+    void solve(int row, int n, vector<bool>& cols, vector<bool>& diag1, vector<bool>& diag2) {
+        if (row == n) {
+            count++;
+            return;
         }
 
-        if (i >= 0) {
-            int j = n - 1;
-            while (nums[j] <= nums[i]) {
-                j--;
+        for (int col = 0; col < n; col++) {
+            int d1 = row - col + (n - 1);
+            int d2 = row + col;
+
+            if (cols[col] || diag1[d1] || diag2[d2]) {
+                continue;
             }
-            swap(nums[i], nums[j]);
-        }
 
-        reverse(nums.begin() + i + 1, nums.end());
+            cols[col] = true;
+            diag1[d1] = true;
+            diag2[d2] = true;
+
+            solve(row + 1, n, cols, diag1, diag2);
+
+            cols[col] = false;
+            diag1[d1] = false;
+            diag2[d2] = false;
+        }
+    }
+
+public:
+    int totalNQueens(int n) {
+        count = 0;
+        vector<bool> cols(n, false);
+        vector<bool> diag1(2 * n - 1, false);
+        vector<bool> diag2(2 * n - 1, false);
+
+        solve(0, n, cols, diag1, diag2);
+        return count;
     }
 };
-
-void printVector(const vector<int>& v) {
-    cout << "[ ";
-    for (int x : v) cout << x << " ";
-    cout << "]\n";
-}
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {1, 2, 3};
-    sol.nextPermutation(nums1);
-    cout << "Example 1: ";
-    printVector(nums1); // Expected: [ 1 3 2 ]
-
-    vector<int> nums2 = {3, 2, 1};
-    sol.nextPermutation(nums2);
-    cout << "Example 2: ";
-    printVector(nums2); // Expected: [ 1 2 3 ]
-
-    vector<int> nums3 = {1, 1, 5};
-    sol.nextPermutation(nums3);
-    cout << "Example 3: ";
-    printVector(nums3); // Expected: [ 1 5 1 ]
+    cout << "Total Solutions for n = 4: " << sol.totalNQueens(4) << " (Expected: 2)" << endl;
+    cout << "Total Solutions for n = 1: " << sol.totalNQueens(1) << " (Expected: 1)" << endl;
 
     return 0;
 }
