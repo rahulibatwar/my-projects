@@ -1,55 +1,41 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
-private:
-    int count = 0;
-
-    void solve(int row, int n, vector<bool>& cols, vector<bool>& diag1, vector<bool>& diag2) {
-        if (row == n) {
-            count++;
-            return;
-        }
-
-        for (int col = 0; col < n; col++) {
-            int d1 = row - col + (n - 1);
-            int d2 = row + col;
-
-            if (cols[col] || diag1[d1] || diag2[d2]) {
-                continue;
-            }
-
-            cols[col] = true;
-            diag1[d1] = true;
-            diag2[d2] = true;
-
-            solve(row + 1, n, cols, diag1, diag2);
-
-            cols[col] = false;
-            diag1[d1] = false;
-            diag2[d2] = false;
-        }
-    }
-
 public:
-    int totalNQueens(int n) {
-        count = 0;
-        vector<bool> cols(n, false);
-        vector<bool> diag1(2 * n - 1, false);
-        vector<bool> diag2(2 * n - 1, false);
+    int firstMissingPositive(vector<int>& nums) {
+        int n = nums.size();
 
-        solve(0, n, cols, diag1, diag2);
-        return count;
+        for (int i = 0; i < n; i++) {
+            while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
+                swap(nums[i], nums[nums[i] - 1]);
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            if (nums[i] != i + 1) {
+                return i + 1;
+            }
+        }
+
+        return n + 1;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Total Solutions for n = 4: " << sol.totalNQueens(4) << " (Expected: 2)" << endl;
-    cout << "Total Solutions for n = 1: " << sol.totalNQueens(1) << " (Expected: 1)" << endl;
+    vector<int> nums1 = {1, 2, 0};
+    cout << "Example 1: " << sol.firstMissingPositive(nums1) << " (Expected: 3)" << endl;
+
+    vector<int> nums2 = {3, 4, -1, 1};
+    cout << "Example 2: " << sol.firstMissingPositive(nums2) << " (Expected: 2)" << endl;
+
+    vector<int> nums3 = {7, 8, 9, 11, 12};
+    cout << "Example 3: " << sol.firstMissingPositive(nums3) << " (Expected: 1)" << endl;
 
     return 0;
 }
