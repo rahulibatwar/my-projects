@@ -1,41 +1,47 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
+#include <string>
 
 using namespace std;
 
 class Solution {
 public:
-    int firstMissingPositive(vector<int>& nums) {
-        int n = nums.size();
+    bool isMatch(string s, string p) {
+        int sIdx = 0, pIdx = 0;
+        int starIdx = -1, sTmpIdx = -1;
+        int sLen = s.length(), pLen = p.length();
 
-        for (int i = 0; i < n; i++) {
-            while (nums[i] > 0 && nums[i] <= n && nums[nums[i] - 1] != nums[i]) {
-                swap(nums[i], nums[nums[i] - 1]);
+        while (sIdx < sLen) {
+            if (pIdx < pLen && (p[pIdx] == '?' || p[pIdx] == s[sIdx])) {
+                sIdx++;
+                pIdx++;
+            } else if (pIdx < pLen && p[pIdx] == '*') {
+                starIdx = pIdx;
+                sTmpIdx = sIdx;
+                pIdx++;
+            } else if (starIdx != -1) {
+                pIdx = starIdx + 1;
+                sTmpIdx++;
+                sIdx = sTmpIdx;
+            } else {
+                return false;
             }
         }
 
-        for (int i = 0; i < n; i++) {
-            if (nums[i] != i + 1) {
-                return i + 1;
-            }
+        while (pIdx < pLen && p[pIdx] == '*') {
+            pIdx++;
         }
 
-        return n + 1;
+        return pIdx == pLen;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {1, 2, 0};
-    cout << "Example 1: " << sol.firstMissingPositive(nums1) << " (Expected: 3)" << endl;
-
-    vector<int> nums2 = {3, 4, -1, 1};
-    cout << "Example 2: " << sol.firstMissingPositive(nums2) << " (Expected: 2)" << endl;
-
-    vector<int> nums3 = {7, 8, 9, 11, 12};
-    cout << "Example 3: " << sol.firstMissingPositive(nums3) << " (Expected: 1)" << endl;
+    cout << boolalpha;
+    cout << "Example 1: " << sol.isMatch("aa", "a") << " (Expected: false)" << endl;
+    cout << "Example 2: " << sol.isMatch("aa", "*") << " (Expected: true)" << endl;
+    cout << "Example 3: " << sol.isMatch("cb", "?a") << " (Expected: false)" << endl;
 
     return 0;
 }
