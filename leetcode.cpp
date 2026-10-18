@@ -1,53 +1,55 @@
 #include <iostream>
 #include <vector>
-#include <deque>
 
 using namespace std;
 
 class Solution {
 public:
-    vector<int> maxSlidingWindow(vector<int>& nums, int k) {
-        deque<int> dq;
-        vector<int> result;
+    bool isValidSudoku(vector<vector<char>>& board) {
+        bool rows[9][9] = {false};
+        bool cols[9][9] = {false};
+        bool boxes[9][9] = {false};
 
-        for (int i = 0; i < nums.size(); i++) {
-            if (!dq.empty() && dq.front() <= i - k) {
-                dq.pop_front();
-            }
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                if (board[r][c] == '.') {
+                    continue;
+                }
 
-            while (!dq.empty() && nums[dq.back()] <= nums[i]) {
-                dq.pop_back();
-            }
+                int num = board[r][c] - '1';
+                int boxIdx = (r / 3) * 3 + (c / 3);
 
-            dq.push_back(i);
+                if (rows[r][num] || cols[c][num] || boxes[boxIdx][num]) {
+                    return false;
+                }
 
-            if (i >= k - 1) {
-                result.push_back(nums[dq.front()]);
+                rows[r][num] = true;
+                cols[c][num] = true;
+                boxes[boxIdx][num] = true;
             }
         }
 
-        return result;
+        return true;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {1, 3, -1, -3, 5, 3, 6, 7};
-    int k1 = 3;
-    vector<int> res1 = sol.maxSlidingWindow(nums1, k1);
+    vector<vector<char>> board = {
+        {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
+        {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
+        {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
+        {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
+        {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
+        {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
+        {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
+        {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
+        {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
+    };
 
-    cout << "Example 1 Output: [ ";
-    for (int x : res1) cout << x << " ";
-    cout << "] (Expected: [ 3 3 5 5 6 7 ])\n";
-
-    vector<int> nums2 = {1};
-    int k2 = 1;
-    vector<int> res2 = sol.maxSlidingWindow(nums2, k2);
-
-    cout << "Example 2 Output: [ ";
-    for (int x : res2) cout << x << " ";
-    cout << "] (Expected: [ 1 ])\n";
+    cout << boolalpha;
+    cout << "Is Valid Sudoku: " << sol.isValidSudoku(board) << " (Expected: true)" << endl;
 
     return 0;
 }
