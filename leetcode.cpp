@@ -1,55 +1,59 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
-public:
-    bool isValidSudoku(vector<vector<char>>& board) {
-        bool rows[9][9] = {false};
-        bool cols[9][9] = {false};
-        bool boxes[9][9] = {false};
-
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
-                if (board[r][c] == '.') {
-                    continue;
-                }
-
-                int num = board[r][c] - '1';
-                int boxIdx = (r / 3) * 3 + (c / 3);
-
-                if (rows[r][num] || cols[c][num] || boxes[boxIdx][num]) {
-                    return false;
-                }
-
-                rows[r][num] = true;
-                cols[c][num] = true;
-                boxes[boxIdx][num] = true;
-            }
+private:
+    void backtrack(vector<int>& nums, vector<bool>& used, vector<int>& current, vector<vector<int>>& result) {
+        if (current.size() == nums.size()) {
+            result.push_back(current);
+            return;
         }
 
-        return true;
+        for (int i = 0; i < nums.size(); i++) {
+            if (used[i]) continue;
+
+            if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) {
+                continue;
+            }
+
+            used[i] = true;
+            current.push_back(nums[i]);
+
+            backtrack(nums, used, current, result);
+
+            current.pop_back();
+            used[i] = false;
+        }
+    }
+
+public:
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        vector<vector<int>> result;
+        vector<int> current;
+        vector<bool> used(nums.size(), false);
+
+        sort(nums.begin(), nums.end());
+
+        backtrack(nums, used, current, result);
+        return result;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<vector<char>> board = {
-        {'5', '3', '.', '.', '7', '.', '.', '.', '.'},
-        {'6', '.', '.', '1', '9', '5', '.', '.', '.'},
-        {'.', '9', '8', '.', '.', '.', '.', '6', '.'},
-        {'8', '.', '.', '.', '6', '.', '.', '.', '3'},
-        {'4', '.', '.', '8', '.', '3', '.', '.', '1'},
-        {'7', '.', '.', '.', '2', '.', '.', '.', '6'},
-        {'.', '6', '.', '.', '.', '.', '2', '8', '.'},
-        {'.', '.', '.', '4', '1', '9', '.', '.', '5'},
-        {'.', '.', '.', '.', '8', '.', '.', '7', '9'}
-    };
+    vector<int> nums1 = {1, 1, 2};
+    vector<vector<int>> res1 = sol.permuteUnique(nums1);
 
-    cout << boolalpha;
-    cout << "Is Valid Sudoku: " << sol.isValidSudoku(board) << " (Expected: true)" << endl;
+    cout << "Permutations for [1, 1, 2]:\n";
+    for (const auto& p : res1) {
+        cout << "[ ";
+        for (int x : p) cout << x << " ";
+        cout << "]\n";
+    }
 
     return 0;
 }
