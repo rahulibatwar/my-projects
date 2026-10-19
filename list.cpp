@@ -1,78 +1,64 @@
-#include <iostream>
-using namespace std;
+//Q. Implement a ‘C’ program to insert element into the queue and delete
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 5
+int main()
+{
+int queue[MAX];
+int rear,front,ch, item;
+rear=-1;
+front=-1;
+do
+{
+    printf("1. insert \n 2.Delete \n 3. Exit");
+    printf("\nEnter your Choice:");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1: 
+            printf("Enter the item to be inserted:" );
+            scanf("%d",&item);
+            if(rear==MAX-1)
+            {
+                printf("Queue is Full\n");
+                break;
+            }
+            else
+            {
+                if(front==-1)
+                {
+                    front=0;
+                }
+                rear=rear+1;
+                queue[rear]=item;
+            break;
 
-class Node {
-public:
-    int data;
-    Node* next;
+            }
+        case 2:
+            if(front==-1)
+            {
+                printf("queue is empty");
+                break;
+            }
+            else
+            {
+                item=queue[front];
+                printf("%d",item);
+                if(rear==front)
+                {
+                    front=-1;
+                    rear=-1;
 
-    Node(int val) {
-        data = val;
-        next = NULL;
-    }
-};
-
-void insertAtTail(Node* &head, int val) {
-    Node* newNode = new Node(val);
-    if (head == NULL) {
-        head = newNode;
-        return;
-    }
-    Node* temp = head;
-    while (temp->next != NULL) {
-        temp = temp->next;
-    }
-    temp->next = newNode;
-}
-
-// 🎯 INTERVIEW SPECIAL: Linked List ko reverse karne ka function
-void reverseList(Node* &head) {
-    Node* prev = NULL;
-    Node* curr = head;
-    Node* nextNode = NULL;
-
-    while (curr != NULL) {
-        nextNode = curr->next; // 1. Agle node ka address safe kiya
-        curr->next = prev;     // 2. Current node ka rasta piche mod diya (Main Step!)
+                }
+                front=front+1;
+                break;
+            }
+        case 3: 
+             exit(0);
         
-        // 3. Pointers ko ek-ek kadam aage badhaya
-        prev = curr;
-        curr = nextNode;
     }
-    head = prev; // 4. Aakhiri mein 'prev' hi hamara naya head ban chuka hoga
-    cout << "[System Notification]: Linked List successfully reversed in-place!" << endl;
-}
+    printf("Do you want to continue 1 for Yes /2 for No");
+    scanf("%d",&ch);
 
-void displayList(Node* head) {
-    Node* temp = head;
-    while (temp != NULL) {
-        cout << temp->data << " -> ";
-        temp = temp->next;
-    }
-    cout << "NULL" << endl;
-}
-
-int main() {
-    cout << "--- DSA Google Interview Challenge: Reverse Linked List ---" << endl << endl;
-
-    Node* head = NULL;
-
-    // Ek achhi badi list banate hain: 10 -> 20 -> 30 -> 40
-    insertAtTail(head, 10);
-    insertAtTail(head, 20);
-    insertAtTail(head, 30);
-    insertAtTail(head, 40);
-    
-    cout << "Original ";
-    displayList(head);
-    cout << "------------------------------------------------------------" << endl;
-
-    // 🔥 Reversing operation trigger karte hain
-    reverseList(head);
-    
-    cout << "Reversed ";
-    displayList(head);
-    cout << "------------------------------------------------------------" << endl;
-
-    return 0;
+}while(ch==1);
 }
