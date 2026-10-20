@@ -1,59 +1,64 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
-using namespace std;
-
-class Solution {
-private:
-    void backtrack(vector<int>& nums, vector<bool>& used, vector<int>& current, vector<vector<int>>& result) {
-        if (current.size() == nums.size()) {
-            result.push_back(current);
-            return;
-        }
-
-        for (int i = 0; i < nums.size(); i++) {
-            if (used[i]) continue;
-
-            if (i > 0 && nums[i] == nums[i - 1] && !used[i - 1]) {
-                continue;
+//Q. Implement a ‘C’ program to insert element into the queue and delete
+#include<stdio.h>
+#include<stdlib.h>
+#define MAX 5
+int main()
+{
+int queue[MAX];
+int rear,front,ch, item;
+rear=-1;
+front=-1;
+do
+{
+    printf("1. insert \n 2.Delete \n 3. Exit");
+    printf("\nEnter your Choice:");
+    scanf("%d",&ch);
+    switch(ch)
+    {
+        case 1: 
+            printf("Enter the item to be inserted:" );
+            scanf("%d",&item);
+            if(rear==MAX-1)
+            {
+                printf("Queue is Full\n");
+                break;
             }
+            else
+            {
+                if(front==-1)
+                {
+                    front=0;
+                }
+                rear=rear+1;
+                queue[rear]=item;
+            break;
 
-            used[i] = true;
-            current.push_back(nums[i]);
+            }
+        case 2:
+            if(front==-1)
+            {
+                printf("queue is empty");
+                break;
+            }
+            else
+            {
+                item=queue[front];
+                printf("%d",item);
+                if(rear==front)
+                {
+                    front=-1;
+                    rear=-1;
 
-            backtrack(nums, used, current, result);
-
-            current.pop_back();
-            used[i] = false;
-        }
+                }
+                front=front+1;
+                break;
+            }
+        case 3: 
+             exit(0);
+        
     }
+    printf("Do you want to continue 1 for Yes /2 for No");
+    scanf("%d",&ch);
 
-public:
-    vector<vector<int>> permuteUnique(vector<int>& nums) {
-        vector<vector<int>> result;
-        vector<int> current;
-        vector<bool> used(nums.size(), false);
-
-        sort(nums.begin(), nums.end());
-
-        backtrack(nums, used, current, result);
-        return result;
-    }
-};
-
-int main() {
-    Solution sol;
-
-    vector<int> nums1 = {1, 1, 2};
-    vector<vector<int>> res1 = sol.permuteUnique(nums1);
-
-    cout << "Permutations for [1, 1, 2]:\n";
-    for (const auto& p : res1) {
-        cout << "[ ";
-        for (int x : p) cout << x << " ";
-        cout << "]\n";
-    }
-
-    return 0;
+}while(ch==1);
 }
