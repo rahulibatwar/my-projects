@@ -1,64 +1,58 @@
-//Q. Implement a ‘C’ program to insert element into the queue and delete
-#include<stdio.h>
-#include<stdlib.h>
-#define MAX 5
-int main()
-{
-int queue[MAX];
-int rear,front,ch, item;
-rear=-1;
-front=-1;
-do
-{
-    printf("1. insert \n 2.Delete \n 3. Exit");
-    printf("\nEnter your Choice:");
-    scanf("%d",&ch);
-    switch(ch)
-    {
-        case 1: 
-            printf("Enter the item to be inserted:" );
-            scanf("%d",&item);
-            if(rear==MAX-1)
-            {
-                printf("Queue is Full\n");
-                break;
-            }
-            else
-            {
-                if(front==-1)
-                {
-                    front=0;
-                }
-                rear=rear+1;
-                queue[rear]=item;
-            break;
+#include <iostream>
+#include <vector>
+#include <algorithm>
 
-            }
-        case 2:
-            if(front==-1)
-            {
-                printf("queue is empty");
-                break;
-            }
-            else
-            {
-                item=queue[front];
-                printf("%d",item);
-                if(rear==front)
-                {
-                    front=-1;
-                    rear=-1;
+using namespace std;
 
-                }
-                front=front+1;
+class Solution {
+private:
+    void backtrack(int start, int target, vector<int>& candidates, 
+                   vector<int>& current, vector<vector<int>>& result) {
+        if (target == 0) {
+            result.push_back(current);
+            return;
+        }
+
+        for (int i = start; i < candidates.size(); i++) {
+            if (candidates[i] > target) {
                 break;
             }
-        case 3: 
-             exit(0);
-        
+
+            if (i > start && candidates[i] == candidates[i - 1]) {
+                continue;
+            }
+
+            current.push_back(candidates[i]);
+            backtrack(i + 1, target - candidates[i], candidates, current, result);
+            current.pop_back();
+        }
     }
-    printf("Do you want to continue 1 for Yes /2 for No");
-    scanf("%d",&ch);
 
-}while(ch==1);
+public:
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> result;
+        vector<int> current;
+
+        sort(candidates.begin(), candidates.end());
+
+        backtrack(0, target, candidates, current, result);
+        return result;
+    }
+};
+
+int main() {
+    Solution sol;
+
+    vector<int> candidates1 = {10, 1, 2, 7, 6, 1, 5};
+    int target1 = 8;
+    vector<vector<int>> res1 = sol.combinationSum2(candidates1, target1);
+
+    cout << "Combinations for target = 8:\n";
+    for (const auto& comb : res1) {
+        cout << "[ ";
+        for (int x : comb) cout << x << " ";
+        cout << "]\n";
+    }
+
+    return 0;
 }
