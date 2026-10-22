@@ -5,54 +5,48 @@
 using namespace std;
 
 class Solution {
-private:
-    void backtrack(int start, int target, vector<int>& candidates, 
-                   vector<int>& current, vector<vector<int>>& result) {
-        if (target == 0) {
-            result.push_back(current);
-            return;
-        }
-
-        for (int i = start; i < candidates.size(); i++) {
-            if (candidates[i] > target) {
-                break;
-            }
-
-            if (i > start && candidates[i] == candidates[i - 1]) {
-                continue;
-            }
-
-            current.push_back(candidates[i]);
-            backtrack(i + 1, target - candidates[i], candidates, current, result);
-            current.pop_back();
-        }
-    }
-
 public:
-    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
-        vector<vector<int>> result;
-        vector<int> current;
+    void rotate(vector<vector<int>>& matrix) {
+        int n = matrix.size();
 
-        sort(candidates.begin(), candidates.end());
+        // 1. Transpose
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                swap(matrix[i][j], matrix[j][i]);
+            }
+        }
 
-        backtrack(0, target, candidates, current, result);
-        return result;
+        // 2. Reverse each row
+        for (int i = 0; i < n; i++) {
+            reverse(matrix[i].begin(), matrix[i].end());
+        }
     }
 };
+
+void printMatrix(const vector<vector<int>>& matrix) {
+    for (const auto& row : matrix) {
+        cout << "[ ";
+        for (int val : row) cout << val << " ";
+        cout << "]\n";
+    }
+}
 
 int main() {
     Solution sol;
 
-    vector<int> candidates1 = {10, 1, 2, 7, 6, 1, 5};
-    int target1 = 8;
-    vector<vector<int>> res1 = sol.combinationSum2(candidates1, target1);
+    vector<vector<int>> mat1 = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
 
-    cout << "Combinations for target = 8:\n";
-    for (const auto& comb : res1) {
-        cout << "[ ";
-        for (int x : comb) cout << x << " ";
-        cout << "]\n";
-    }
+    cout << "Original Matrix:\n";
+    printMatrix(mat1);
+
+    sol.rotate(mat1);
+
+    cout << "\nRotated Matrix (90 deg Clockwise):\n";
+    printMatrix(mat1);
 
     return 0;
 }
