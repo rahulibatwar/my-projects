@@ -1,47 +1,42 @@
 #include <iostream>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <algorithm>
+#include <iomanip>
 
 using namespace std;
 
 class Solution {
 public:
-    vector<vector<string>> groupAnagrams(vector<string>& strs) {
-        unordered_map<string, vector<string>> mp;
-
-        for (const string& s : strs) {
-            string key = s;
-            sort(key.begin(), key.end());
-            mp[key].push_back(s);
+    double myPow(double x, int n) {
+        long long N = n;
+        if (N < 0) {
+            N = -N;
         }
 
-        vector<vector<string>> result;
-        result.reserve(mp.size());
+        double ans = 1.0;
+        double currentProduct = x;
 
-        for (auto& pair : mp) {
-            result.push_back(move(pair.second));
+        while (N > 0) {
+            if (N % 2 == 1) {
+                ans *= currentProduct;
+            }
+            currentProduct *= currentProduct;
+            N /= 2;
         }
 
-        return result;
+        return (n < 0) ? (1.0 / ans) : ans;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<string> strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
-    vector<vector<string>> groups = sol.groupAnagrams(strs);
+    cout << fixed << setprecision(5);
+    cout << "Example 1: " << sol.myPow(2.00000, 10) << " (Expected: 1024.00000)\n";
+    cout << "Example 2: " << sol.myPow(2.10000, 3) << " (Expected: 9.26100)\n";
+    cout << "Example 3: " << sol.myPow(2.00000, -2) << " (Expected: 0.25000)\n";
 
-    cout << "Grouped Anagrams:\n";
-    for (const auto& group : groups) {
-        cout << "[ ";
-        for (const string& word : group) {
-            cout << "\"" << word << "\" ";
-        }
-        cout << "]\n";
-    }
+    // Tricky test case:
+    cout << setprecision(5);
+    cout << "Tricky Case: " << sol.myPow(-0.999999968539456, -1669585506) << " (Expected: 191.06370)\n";
 
     return 0;
 }
