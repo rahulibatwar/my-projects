@@ -1,42 +1,73 @@
 #include <iostream>
-#include <iomanip>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    double myPow(double x, int n) {
-        long long N = n;
-        if (N < 0) {
-            N = -N;
-        }
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        vector<int> result;
+        if (matrix.empty() || matrix[0].empty()) return result;
 
-        double ans = 1.0;
-        double currentProduct = x;
+        int top = 0;
+        int bottom = matrix.size() - 1;
+        int left = 0;
+        int right = matrix[0].size() - 1;
 
-        while (N > 0) {
-            if (N % 2 == 1) {
-                ans *= currentProduct;
+        while (top <= bottom && left <= right) {
+            for (int col = left; col <= right; col++) {
+                result.push_back(matrix[top][col]);
             }
-            currentProduct *= currentProduct;
-            N /= 2;
+            top++;
+
+            for (int row = top; row <= bottom; row++) {
+                result.push_back(matrix[row][right]);
+            }
+            right--;
+
+            if (top <= bottom) {
+                for (int col = right; col >= left; col--) {
+                    result.push_back(matrix[bottom][col]);
+                }
+                bottom--;
+            }
+
+            if (left <= right) {
+                for (int row = bottom; row >= top; row--) {
+                    result.push_back(matrix[row][left]);
+                }
+                left++;
+            }
         }
 
-        return (n < 0) ? (1.0 / ans) : ans;
+        return result;
     }
 };
+
+void printVector(const vector<int>& v) {
+    cout << "[ ";
+    for (int x : v) cout << x << " ";
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    cout << fixed << setprecision(5);
-    cout << "Example 1: " << sol.myPow(2.00000, 10) << " (Expected: 1024.00000)\n";
-    cout << "Example 2: " << sol.myPow(2.10000, 3) << " (Expected: 9.26100)\n";
-    cout << "Example 3: " << sol.myPow(2.00000, -2) << " (Expected: 0.25000)\n";
+    vector<vector<int>> mat1 = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    cout << "Example 1 Output: ";
+    printVector(sol.spiralOrder(mat1)); // Expected: [ 1 2 3 6 9 8 7 4 5 ]
 
-    // Tricky test case:
-    cout << setprecision(5);
-    cout << "Tricky Case: " << sol.myPow(-0.999999968539456, -1669585506) << " (Expected: 191.06370)\n";
+    vector<vector<int>> mat2 = {
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12}
+    };
+    cout << "Example 2 Output: ";
+    printVector(sol.spiralOrder(mat2)); // Expected: [ 1 2 3 4 8 12 11 10 9 5 6 7 ]
 
     return 0;
 }
