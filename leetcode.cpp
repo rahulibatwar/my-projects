@@ -1,73 +1,47 @@
 #include <iostream>
+#include <string>
 #include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    vector<int> spiralOrder(vector<vector<int>>& matrix) {
-        vector<int> result;
-        if (matrix.empty() || matrix[0].empty()) return result;
+    string getPermutation(int n, int k) {
+        int fact = 1;
+        vector<int> numbers;
 
-        int top = 0;
-        int bottom = matrix.size() - 1;
-        int left = 0;
-        int right = matrix[0].size() - 1;
+        for (int i = 1; i < n; i++) {
+            fact *= i;
+            numbers.push_back(i);
+        }
+        numbers.push_back(n);
 
-        while (top <= bottom && left <= right) {
-            for (int col = left; col <= right; col++) {
-                result.push_back(matrix[top][col]);
-            }
-            top++;
+        string result = "";
+        k = k - 1;
 
-            for (int row = top; row <= bottom; row++) {
-                result.push_back(matrix[row][right]);
-            }
-            right--;
+        while (true) {
+            int index = k / fact;
+            result += to_string(numbers[index]);
+            numbers.erase(numbers.begin() + index);
 
-            if (top <= bottom) {
-                for (int col = right; col >= left; col--) {
-                    result.push_back(matrix[bottom][col]);
-                }
-                bottom--;
+            if (numbers.empty()) {
+                break;
             }
 
-            if (left <= right) {
-                for (int row = bottom; row >= top; row--) {
-                    result.push_back(matrix[row][left]);
-                }
-                left++;
-            }
+            k %= fact;
+            fact /= numbers.size();
         }
 
         return result;
     }
 };
 
-void printVector(const vector<int>& v) {
-    cout << "[ ";
-    for (int x : v) cout << x << " ";
-    cout << "]\n";
-}
-
 int main() {
     Solution sol;
 
-    vector<vector<int>> mat1 = {
-        {1, 2, 3},
-        {4, 5, 6},
-        {7, 8, 9}
-    };
-    cout << "Example 1 Output: ";
-    printVector(sol.spiralOrder(mat1)); // Expected: [ 1 2 3 6 9 8 7 4 5 ]
-
-    vector<vector<int>> mat2 = {
-        {1, 2, 3, 4},
-        {5, 6, 7, 8},
-        {9, 10, 11, 12}
-    };
-    cout << "Example 2 Output: ";
-    printVector(sol.spiralOrder(mat2)); // Expected: [ 1 2 3 4 8 12 11 10 9 5 6 7 ]
+    cout << "Example 1 (n=3, k=3): " << sol.getPermutation(3, 3) << " (Expected: 213)\n";
+    cout << "Example 2 (n=4, k=9): " << sol.getPermutation(4, 9) << " (Expected: 2314)\n";
+    cout << "Example 3 (n=3, k=1): " << sol.getPermutation(3, 1) << " (Expected: 123)\n";
 
     return 0;
 }
