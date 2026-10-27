@@ -1,47 +1,49 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    string getPermutation(int n, int k) {
-        int fact = 1;
-        vector<int> numbers;
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        if (intervals.empty()) return {};
 
-        for (int i = 1; i < n; i++) {
-            fact *= i;
-            numbers.push_back(i);
-        }
-        numbers.push_back(n);
+        sort(intervals.begin(), intervals.end());
 
-        string result = "";
-        k = k - 1;
+        vector<vector<int>> merged;
+        merged.push_back(intervals[0]);
 
-        while (true) {
-            int index = k / fact;
-            result += to_string(numbers[index]);
-            numbers.erase(numbers.begin() + index);
-
-            if (numbers.empty()) {
-                break;
+        for (size_t i = 1; i < intervals.size(); i++) {
+            if (intervals[i][0] <= merged.back()[1]) {
+                merged.back()[1] = max(merged.back()[1], intervals[i][1]);
+            } else {
+                merged.push_back(intervals[i]);
             }
-
-            k %= fact;
-            fact /= numbers.size();
         }
 
-        return result;
+        return merged;
     }
 };
+
+void printIntervals(const vector<vector<int>>& intervals) {
+    cout << "[ ";
+    for (const auto& iv : intervals) {
+        cout << "[" << iv[0] << ", " << iv[1] << "] ";
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (n=3, k=3): " << sol.getPermutation(3, 3) << " (Expected: 213)\n";
-    cout << "Example 2 (n=4, k=9): " << sol.getPermutation(4, 9) << " (Expected: 2314)\n";
-    cout << "Example 3 (n=3, k=1): " << sol.getPermutation(3, 1) << " (Expected: 123)\n";
+    vector<vector<int>> intervals1 = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
+    cout << "Example 1 Output: ";
+    printIntervals(sol.merge(intervals1)); // Expected: [ [1, 6] [8, 10] [15, 18] ]
+
+    vector<vector<int>> intervals2 = {{1, 4}, {4, 5}};
+    cout << "Example 2 Output: ";
+    printIntervals(sol.merge(intervals2)); // Expected: [ [1, 5] ]
 
     return 0;
 }
