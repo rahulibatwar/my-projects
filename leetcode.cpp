@@ -6,23 +6,29 @@ using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> merge(vector<vector<int>>& intervals) {
-        if (intervals.empty()) return {};
+    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
+        vector<vector<int>> result;
+        int i = 0;
+        int n = intervals.size();
 
-        sort(intervals.begin(), intervals.end());
-
-        vector<vector<int>> merged;
-        merged.push_back(intervals[0]);
-
-        for (size_t i = 1; i < intervals.size(); i++) {
-            if (intervals[i][0] <= merged.back()[1]) {
-                merged.back()[1] = max(merged.back()[1], intervals[i][1]);
-            } else {
-                merged.push_back(intervals[i]);
-            }
+        while (i < n && intervals[i][1] < newInterval[0]) {
+            result.push_back(intervals[i]);
+            i++;
         }
 
-        return merged;
+        while (i < n && intervals[i][0] <= newInterval[1]) {
+            newInterval[0] = min(newInterval[0], intervals[i][0]);
+            newInterval[1] = max(newInterval[1], intervals[i][1]);
+            i++;
+        }
+        result.push_back(newInterval);
+
+        while (i < n) {
+            result.push_back(intervals[i]);
+            i++;
+        }
+
+        return result;
     }
 };
 
@@ -37,13 +43,15 @@ void printIntervals(const vector<vector<int>>& intervals) {
 int main() {
     Solution sol;
 
-    vector<vector<int>> intervals1 = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
+    vector<vector<int>> intervals1 = {{1, 3}, {6, 9}};
+    vector<int> newInterval1 = {2, 5};
     cout << "Example 1 Output: ";
-    printIntervals(sol.merge(intervals1)); // Expected: [ [1, 6] [8, 10] [15, 18] ]
+    printIntervals(sol.insert(intervals1, newInterval1)); // Expected: [ [1, 5] [6, 9] ]
 
-    vector<vector<int>> intervals2 = {{1, 4}, {4, 5}};
+    vector<vector<int>> intervals2 = {{1, 2}, {3, 5}, {6, 7}, {8, 10}, {12, 16}};
+    vector<int> newInterval2 = {4, 8};
     cout << "Example 2 Output: ";
-    printIntervals(sol.merge(intervals2)); // Expected: [ [1, 5] ]
+    printIntervals(sol.insert(intervals2, newInterval2)); // Expected: [ [1, 2] [3, 10] [12, 16] ]
 
     return 0;
 }
