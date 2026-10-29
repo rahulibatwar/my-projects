@@ -1,57 +1,33 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
+#include <string>
 
 using namespace std;
 
 class Solution {
 public:
-    vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
-        vector<vector<int>> result;
-        int i = 0;
-        int n = intervals.size();
+    int lengthOfLastWord(string s) {
+        int i = s.length() - 1;
+        int length = 0;
 
-        while (i < n && intervals[i][1] < newInterval[0]) {
-            result.push_back(intervals[i]);
-            i++;
+        while (i >= 0 && s[i] == ' ') {
+            i--;
         }
 
-        while (i < n && intervals[i][0] <= newInterval[1]) {
-            newInterval[0] = min(newInterval[0], intervals[i][0]);
-            newInterval[1] = max(newInterval[1], intervals[i][1]);
-            i++;
-        }
-        result.push_back(newInterval);
-
-        while (i < n) {
-            result.push_back(intervals[i]);
-            i++;
+        while (i >= 0 && s[i] != ' ') {
+            length++;
+            i--;
         }
 
-        return result;
+        return length;
     }
 };
-
-void printIntervals(const vector<vector<int>>& intervals) {
-    cout << "[ ";
-    for (const auto& iv : intervals) {
-        cout << "[" << iv[0] << ", " << iv[1] << "] ";
-    }
-    cout << "]\n";
-}
 
 int main() {
     Solution sol;
 
-    vector<vector<int>> intervals1 = {{1, 3}, {6, 9}};
-    vector<int> newInterval1 = {2, 5};
-    cout << "Example 1 Output: ";
-    printIntervals(sol.insert(intervals1, newInterval1)); // Expected: [ [1, 5] [6, 9] ]
-
-    vector<vector<int>> intervals2 = {{1, 2}, {3, 5}, {6, 7}, {8, 10}, {12, 16}};
-    vector<int> newInterval2 = {4, 8};
-    cout << "Example 2 Output: ";
-    printIntervals(sol.insert(intervals2, newInterval2)); // Expected: [ [1, 2] [3, 10] [12, 16] ]
+    cout << "Example 1: " << sol.lengthOfLastWord("Hello World") << " (Expected: 5)\n";
+    cout << "Example 2: " << sol.lengthOfLastWord("   fly me   to   the moon  ") << " (Expected: 4)\n";
+    cout << "Example 3: " << sol.lengthOfLastWord("luffy is still joyboy") << " (Expected: 6)\n";
 
     return 0;
 }
