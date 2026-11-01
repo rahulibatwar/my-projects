@@ -1,42 +1,30 @@
 #include <iostream>
-#include <vector>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    int countPrimes(int n) {
-        if (n <= 2) return 0;
+    int uniquePaths(int m, int n) {
+        int totalMoves = m + n - 2;
+        int r = min(m - 1, n - 1);
+        long long ans = 1;
 
-        vector<bool> isPrime(n, true);
-        isPrime[0] = isPrime[1] = false;
-
-        for (int i = 2; (long long)i * i < n; i++) {
-            if (isPrime[i]) {
-                for (int j = i * i; j < n; j += i) {
-                    isPrime[j] = false;
-                }
-            }
+        for (int i = 1; i <= r; i++) {
+            ans = ans * (totalMoves - r + i) / i;
         }
 
-        int count = 0;
-        for (int i = 2; i < n; i++) {
-            if (isPrime[i]) {
-                count++;
-            }
-        }
-
-        return count;
+        return static_cast<int>(ans);
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (n = 10): " << sol.countPrimes(10) << " (Expected: 4)\n";
-    cout << "Example 2 (n = 0): " << sol.countPrimes(0) << " (Expected: 0)\n";
-    cout << "Example 3 (n = 1): " << sol.countPrimes(1) << " (Expected: 0)\n";
-    cout << "Test Case (n = 20): " << sol.countPrimes(20) << " (Expected: 8)\n";
+    cout << "Example 1 (m = 3, n = 7): " << sol.uniquePaths(3, 7) << " (Expected: 28)\n";
+    cout << "Example 2 (m = 3, n = 2): " << sol.uniquePaths(3, 2) << " (Expected: 3)\n";
+    cout << "Example 3 (m = 7, n = 3): " << sol.uniquePaths(7, 3) << " (Expected: 28)\n";
+    cout << "Example 4 (m = 1, n = 1): " << sol.uniquePaths(1, 1) << " (Expected: 1)\n";
 
     return 0;
 }
