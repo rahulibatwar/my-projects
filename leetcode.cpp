@@ -1,50 +1,46 @@
 #include <iostream>
-#include <vector>
+#include <string>
 #include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    int maxProfit(int k, vector<int>& prices) {
-        int n = prices.size();
-        if (n <= 1 || k == 0) return 0;
+    string addBinary(string a, string b) {
+        string result = "";
+        int i = a.length() - 1;
+        int j = b.length() - 1;
+        int carry = 0;
 
-        if (k >= n / 2) {
-            int maxProfitGreedy = 0;
-            for (int i = 1; i < n; i++) {
-                if (prices[i] > prices[i - 1]) {
-                    maxProfitGreedy += prices[i] - prices[i - 1];
-                }
+        while (i >= 0 || j >= 0 || carry) {
+            int sum = carry;
+
+            if (i >= 0) {
+                sum += a[i] - '0';
+                i--;
             }
-            return maxProfitGreedy;
+            if (j >= 0) {
+                sum += b[j] - '0';
+                j--;
+            }
+
+            result.push_back((sum % 2) + '0');
+            carry = sum / 2;
         }
 
-        vector<int> buy(k + 1, -1e9);
-        vector<int> sell(k + 1, 0);
-
-        for (int price : prices) {
-            for (int t = 1; t <= k; t++) {
-                buy[t] = max(buy[t], sell[t - 1] - price);
-                sell[t] = max(sell[t], buy[t] + price);
-            }
-        }
-
-        return sell[k];
+        reverse(result.begin(), result.end());
+        return result;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> prices1 = {2, 4, 1};
-    cout << "Example 1 (k = 2): " << sol.maxProfit(2, prices1) << " (Expected: 2)\n";
+    cout << "Example 1 (a = \"11\", b = \"1\"): " 
+         << sol.addBinary("11", "1") << " (Expected: 100)\n"; //[cite: 23]
 
-    vector<int> prices2 = {3, 2, 6, 5, 0, 3};
-    cout << "Example 2 (k = 2): " << sol.maxProfit(2, prices2) << " (Expected: 7)\n";
-
-    vector<int> prices3 = {1, 2};
-    cout << "Example 3 (k = 1): " << sol.maxProfit(1, prices3) << " (Expected: 1)\n";
+    cout << "Example 2 (a = \"1010\", b = \"1011\"): " 
+         << sol.addBinary("1010", "1011") << " (Expected: 10101)\n"; //[cite: 23]
 
     return 0;
 }
