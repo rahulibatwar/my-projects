@@ -1,46 +1,65 @@
 #include <iostream>
-#include <string>
-#include <algorithm>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    string addBinary(string a, string b) {
-        string result = "";
-        int i = a.length() - 1;
-        int j = b.length() - 1;
-        int carry = 0;
+    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+        int p1 = m - 1;
+        int p2 = n - 1;
+        int p = m + n - 1;
 
-        while (i >= 0 || j >= 0 || carry) {
-            int sum = carry;
-
-            if (i >= 0) {
-                sum += a[i] - '0';
-                i--;
+        while (p1 >= 0 && p2 >= 0) {
+            if (nums1[p1] > nums2[p2]) {
+                nums1[p] = nums1[p1];
+                p1--;
+            } else {
+                nums1[p] = nums2[p2];
+                p2--;
             }
-            if (j >= 0) {
-                sum += b[j] - '0';
-                j--;
-            }
-
-            result.push_back((sum % 2) + '0');
-            carry = sum / 2;
+            p--;
         }
 
-        reverse(result.begin(), result.end());
-        return result;
+        while (p2 >= 0) {
+            nums1[p] = nums2[p2];
+            p2--;
+            p--;
+        }
     }
 };
+
+void printVector(const vector<int>& nums) {
+    cout << "[ ";
+    for (int x : nums) {
+        cout << x << " ";
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (a = \"11\", b = \"1\"): " 
-         << sol.addBinary("11", "1") << " (Expected: 100)\n"; //[cite: 23]
+    // Example 1
+    vector<int> nums1 = {1, 2, 3, 0, 0, 0};
+    vector<int> nums2 = {2, 5, 6};
+    sol.merge(nums1, 3, nums2, 3);
+    cout << "Example 1 Output: ";
+    printVector(nums1); // Expected: [ 1 2 2 3 5 6 ]
 
-    cout << "Example 2 (a = \"1010\", b = \"1011\"): " 
-         << sol.addBinary("1010", "1011") << " (Expected: 10101)\n"; //[cite: 23]
+    // Example 2
+    vector<int> nums3 = {1};
+    vector<int> nums4 = {};
+    sol.merge(nums3, 1, nums4, 0);
+    cout << "Example 2 Output: ";
+    printVector(nums3); // Expected: [ 1 ]
+
+    // Example 3
+    vector<int> nums5 = {0};
+    vector<int> nums6 = {1};
+    sol.merge(nums5, 0, nums6, 1);
+    cout << "Example 3 Output: ";
+    printVector(nums5); // Expected: [ 1 ]
 
     return 0;
 }
