@@ -1,34 +1,43 @@
 #include <stdio.h>
-int main() {
-    int arr [50], n, i, pos, element;
+#define MAX 5 
 
-    printf(" Enter the number of elements: ");
-    scanf("%d", &n);
+int queue[MAX];
+int front = -1, rear = -1; 
 
-    printf("enter %d elements: ", n);
-    for (i = 0; i < n; i++) {
-        scanf("%d", &arr[i]);
+
+void insert(int item) {
+    if(rear == MAX -1){
+        printf("queue is overflow! cannot insert %d\n", item);
+        return;
     }
-    printf("enter element to insert: ");
-    scanf("%d", &element);
-    printf("enter position (1 to %d): ", n + 1);
-    scanf("%d", &pos);
-
-    if (pos < 1 || pos > n + 1) {
-        printf("invalid position! \n");
-    } else { 
-        for (i = n - 1; i >= pos - 1; i--) {
-            arr[i + 1] = arr[i];
-        }
-        arr[pos - 1] = element;
-        n++; 
-
-        printf("array after insertion: \n");
-        for (i = 0; i <n; i++) { 
-            printf("%d" , arr[i]);
-        }
-        printf("\n");
+    if (front == -1)
+    front = 0;
+rear++;
+queue[rear] = item;
+printf("inserted: %d\n", item);
+}
+ void delete() { 
+    if(front == -1 || front > rear) {
+        printf("queue Underflow! queue is empty\n");
+        return; 
     }
-    return 0;
+        printf("deleted: %d\n", queue[front]);
+        front++;
+        if(front > rear){
+        front = rear = -1 ;
+    }
 }
 
+int main(){
+    insert(10);
+    insert(20);
+    insert(30);
+    delete();
+    delete();
+    insert(40);
+    delete();
+    delete();
+    delete();
+    return 0;
+    
+}
