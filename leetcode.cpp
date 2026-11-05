@@ -5,61 +5,30 @@ using namespace std;
 
 class Solution {
 public:
-    void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
-        int p1 = m - 1;
-        int p2 = n - 1;
-        int p = m + n - 1;
+    int maxProfit(vector<int>& prices) {
+        int totalProfit = 0;
 
-        while (p1 >= 0 && p2 >= 0) {
-            if (nums1[p1] > nums2[p2]) {
-                nums1[p] = nums1[p1];
-                p1--;
-            } else {
-                nums1[p] = nums2[p2];
-                p2--;
+        for (size_t i = 1; i < prices.size(); i++) {
+            if (prices[i] > prices[i - 1]) {
+                totalProfit += prices[i] - prices[i - 1];
             }
-            p--;
         }
 
-        while (p2 >= 0) {
-            nums1[p] = nums2[p2];
-            p2--;
-            p--;
-        }
+        return totalProfit;
     }
 };
-
-void printVector(const vector<int>& nums) {
-    cout << "[ ";
-    for (int x : nums) {
-        cout << x << " ";
-    }
-    cout << "]\n";
-}
 
 int main() {
     Solution sol;
 
-    // Example 1
-    vector<int> nums1 = {1, 2, 3, 0, 0, 0};
-    vector<int> nums2 = {2, 5, 6};
-    sol.merge(nums1, 3, nums2, 3);
-    cout << "Example 1 Output: ";
-    printVector(nums1); // Expected: [ 1 2 2 3 5 6 ]
+    vector<int> prices1 = {7, 1, 5, 3, 6, 4};
+    cout << "Example 1 Output: " << sol.maxProfit(prices1) << " (Expected: 7)\n";
 
-    // Example 2
-    vector<int> nums3 = {1};
-    vector<int> nums4 = {};
-    sol.merge(nums3, 1, nums4, 0);
-    cout << "Example 2 Output: ";
-    printVector(nums3); // Expected: [ 1 ]
+    vector<int> prices2 = {1, 2, 3, 4, 5};
+    cout << "Example 2 Output: " << sol.maxProfit(prices2) << " (Expected: 4)\n";
 
-    // Example 3
-    vector<int> nums5 = {0};
-    vector<int> nums6 = {1};
-    sol.merge(nums5, 0, nums6, 1);
-    cout << "Example 3 Output: ";
-    printVector(nums5); // Expected: [ 1 ]
+    vector<int> prices3 = {7, 6, 4, 3, 1};
+    cout << "Example 3 Output: " << sol.maxProfit(prices3) << " (Expected: 0)\n";
 
     return 0;
 }
