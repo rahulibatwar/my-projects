@@ -1,59 +1,57 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <climits>
 
 using namespace std;
 
 class Solution {
 public:
-    string minWindow(string s, string t) {
-        if (s.empty() || t.empty() || s.length() < t.length()) {
-            return "";
+    int uniquePathsWithObstacles(vector<vector<int>>& obstacleGrid) {
+        int m = obstacleGrid.size();
+        int n = obstacleGrid[0].size();
+
+        if (obstacleGrid[0][0] == 1 || obstacleGrid[m - 1][n - 1] == 1) {
+            return 0;
         }
 
-        vector<int> mapT(128, 0);
-        for (char c : t) {
-            mapT[c]++;
-        }
+        vector<long long> dp(n, 0);
+        dp[0] = 1;
 
-        int left = 0;
-        int right = 0;
-        int required = t.length();
-        int minLen = INT_MAX;
-        int startIndex = 0;
-
-        while (right < s.length()) {
-            if (mapT[s[right]] > 0) {
-                required--;
-            }
-            mapT[s[right]]--;
-            right++;
-
-            while (required == 0) {
-                if (right - left < minLen) {
-                    minLen = right - left;
-                    startIndex = left;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (obstacleGrid[i][j] == 1) {
+                    dp[j] = 0;
+                } else if (j > 0) {
+                    dp[j] += dp[j - 1];
                 }
-
-                mapT[s[left]]++;
-                if (mapT[s[left]] > 0) {
-                    required++;
-                }
-                left++;
             }
         }
 
-        return (minLen == INT_MAX) ? "" : s.substr(startIndex, minLen);
+        return static_cast<int>(dp[n - 1]);
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Example 1: \"" << sol.minWindow("ADOBECODEBANC", "ABC") << "\" (Expected: \"BANC\")\n";
-    cout << "Example 2: \"" << sol.minWindow("a", "a") << "\" (Expected: \"a\")\n";
-    cout << "Example 3: \"" << sol.minWindow("a", "aa") << "\" (Expected: \"\")\n";
+    vector<vector<int>> grid1 = {
+        {0, 0, 0},
+        {0, 1, 0},
+        {0, 0, 0}
+    };
+    cout << "Example 1 Output: " << sol.uniquePathsWithObstacles(grid1) << " (Expected: 2)\n";
+
+    vector<vector<int>> grid2 = {
+        {0, 1},
+        {0, 0}
+    };
+    cout << "Example 2 Output: " << sol.uniquePathsWithObstacles(grid2) << " (Expected: 1)\n";
+
+    vector<vector<int>> grid3 = {
+        {0, 0},
+        {1, 1},
+        {0, 0}
+    };
+    cout << "Example 3 Output: " << sol.uniquePathsWithObstacles(grid3) << " (Expected: 0)\n";
 
     return 0;
 }
