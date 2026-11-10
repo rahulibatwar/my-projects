@@ -1,42 +1,71 @@
 #include <iostream>
+#include <vector>
+#include <stack>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
-public:
-    int mySqrt(int x) {
-        if (x < 2) return x;
+private:
+    int largestRectangleArea(const vector<int>& heights) {
+        stack<int> st;
+        int maxArea = 0;
+        int n = heights.size();
 
-        int low = 1;
-        int high = x / 2;
-        int ans = 0;
-
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            long long square = (long long)mid * mid;
-
-            if (square == x) {
-                return mid;
-            } else if (square < x) {
-                ans = mid;
-                low = mid + 1;
-            } else {
-                high = mid - 1;
+        for (int i = 0; i <= n; i++) {
+            int currentHeight = (i == n) ? 0 : heights[i];
+            while (!st.empty() && currentHeight < heights[st.top()]) {
+                int h = heights[st.top()];
+                st.pop();
+                int w = st.empty() ? i : (i - st.top() - 1);
+                maxArea = max(maxArea, h * w);
             }
+            st.push(i);
         }
 
-        return ans;
+        return maxArea;
+    }
+
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        if (matrix.empty() || matrix[0].empty()) return 0;
+
+        int rows = matrix.size();
+        int cols = matrix[0].size();
+        vector<int> heights(cols, 0);
+        int maxRectangle = 0;
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (matrix[i][j] == '1') {
+                    heights[j] += 1;
+                } else {
+                    heights[j] = 0;
+                }
+            }
+            maxRectangle = max(maxRectangle, largestRectangleArea(heights));
+        }
+
+        return maxRectangle;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (x = 4): " << sol.mySqrt(4) << " (Expected: 2)\n"; //[cite: 20]
-    cout << "Example 2 (x = 8): " << sol.mySqrt(8) << " (Expected: 2)\n"; //[cite: 20]
-    cout << "Test 3 (x = 0): " << sol.mySqrt(0) << " (Expected: 0)\n";
-    cout << "Test 4 (x = 1): " << sol.mySqrt(1) << " (Expected: 1)\n";
-    cout << "Test 5 (x = 2147395599): " << sol.mySqrt(2147395599) << " (Expected: 46339)\n";
+    vector<vector<char>> mat1 = {
+        {'1', '0', '1', '0', '0'},
+        {'1', '0', '1', '1', '1'},
+        {'1', '1', '1', '1', '1'},
+        {'1', '0', '0', '1', '0'}
+    };
+    cout << "Example 1 Output: " << sol.maximalRectangle(mat1) << " (Expected: 6)\n"; //[cite: 21]
+
+    vector<vector<char>> mat2 = {{'0'}};
+    cout << "Example 2 Output: " << sol.maximalRectangle(mat2) << " (Expected: 0)\n"; //[cite: 21]
+
+    vector<vector<char>> mat3 = {{'1'}};
+    cout << "Example 3 Output: " << sol.maximalRectangle(mat3) << " (Expected: 1)\n"; //[cite: 21]
 
     return 0;
 }
