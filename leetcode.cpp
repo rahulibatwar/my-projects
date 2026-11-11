@@ -1,71 +1,58 @@
 #include <iostream>
-#include <vector>
-#include <stack>
-#include <algorithm>
+#include <string>
+#include <cctype>
 
 using namespace std;
 
 class Solution {
-private:
-    int largestRectangleArea(const vector<int>& heights) {
-        stack<int> st;
-        int maxArea = 0;
-        int n = heights.size();
-
-        for (int i = 0; i <= n; i++) {
-            int currentHeight = (i == n) ? 0 : heights[i];
-            while (!st.empty() && currentHeight < heights[st.top()]) {
-                int h = heights[st.top()];
-                st.pop();
-                int w = st.empty() ? i : (i - st.top() - 1);
-                maxArea = max(maxArea, h * w);
-            }
-            st.push(i);
-        }
-
-        return maxArea;
-    }
-
 public:
-    int maximalRectangle(vector<vector<char>>& matrix) {
-        if (matrix.empty() || matrix[0].empty()) return 0;
+    bool isNumber(string s) {
+        bool seenDigit = false;
+        bool seenDot = false;
+        bool seenExp = false;
+        bool digitAfterExp = true;
 
-        int rows = matrix.size();
-        int cols = matrix[0].size();
-        vector<int> heights(cols, 0);
-        int maxRectangle = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s[i];
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
-                if (matrix[i][j] == '1') {
-                    heights[j] += 1;
-                } else {
-                    heights[j] = 0;
+            if (isdigit(c)) {
+                seenDigit = true;
+                if (seenExp) {
+                    digitAfterExp = true;
                 }
+            } else if (c == '+' || c == '-') {
+                if (i > 0 && s[i - 1] != 'e' && s[i - 1] != 'E') {
+                    return false;
+                }
+            } else if (c == '.') {
+                if (seenDot || seenExp) {
+                    return false;
+                }
+                seenDot = true;
+            } else if (c == 'e' || c == 'E') {
+                if (seenExp || !seenDigit) {
+                    return false;
+                }
+                seenExp = true;
+                digitAfterExp = false;
+            } else {
+                return false;
             }
-            maxRectangle = max(maxRectangle, largestRectangleArea(heights));
         }
 
-        return maxRectangle;
+        return seenDigit && digitAfterExp;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<vector<char>> mat1 = {
-        {'1', '0', '1', '0', '0'},
-        {'1', '0', '1', '1', '1'},
-        {'1', '1', '1', '1', '1'},
-        {'1', '0', '0', '1', '0'}
-    };
-    cout << "Example 1 Output: " << sol.maximalRectangle(mat1) << " (Expected: 6)\n"; //[cite: 21]
-
-    vector<vector<char>> mat2 = {{'0'}};
-    cout << "Example 2 Output: " << sol.maximalRectangle(mat2) << " (Expected: 0)\n"; //[cite: 21]
-
-    vector<vector<char>> mat3 = {{'1'}};
-    cout << "Example 3 Output: " << sol.maximalRectangle(mat3) << " (Expected: 1)\n"; //[cite: 21]
+    cout << boolalpha;
+    cout << "Example 1 (\"0\"): " << sol.isNumber("0") << " (Expected: true)\n"; //[cite: 22]
+    cout << "Example 2 (\"e\"): " << sol.isNumber("e") << " (Expected: false)\n"; //[cite: 22]
+    cout << "Example 3 (\".\"): " << sol.isNumber(".") << " (Expected: false)\n"; //[cite: 22]
+    cout << "Test 4 (\"-123.456e789\"): " << sol.isNumber("-123.456e789") << " (Expected: true)\n"; //[cite: 22]
+    cout << "Test 5 (\"99e2.5\"): " << sol.isNumber("99e2.5") << " (Expected: false)\n"; //[cite: 22]
 
     return 0;
 }
