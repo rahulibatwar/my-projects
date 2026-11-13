@@ -1,48 +1,82 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
+#include <string>
 
 using namespace std;
 
 class Solution {
 public:
-    int minPathSum(vector<vector<int>>& grid) {
-        int m = grid.size();
-        int n = grid[0].size();
+    vector<string> fullJustify(vector<string>& words, int maxWidth) {
+        vector<string> result;
+        int n = words.size();
+        int i = 0;
 
-        vector<int> dp(n, 0);
-        dp[0] = grid[0][0];
+        while (i < n) {
+            int j = i + 1;
+            int lineLength = words[i].length();
 
-        for (int j = 1; j < n; j++) {
-            dp[j] = dp[j - 1] + grid[0][j];
-        }
-
-        for (int i = 1; i < m; i++) {
-            dp[0] += grid[i][0];
-            for (int j = 1; j < n; j++) {
-                dp[j] = grid[i][j] + min(dp[j], dp[j - 1]);
+            while (j < n && lineLength + 1 + words[j].length() <= maxWidth) {
+                lineLength += 1 + words[j].length();
+                j++;
             }
+
+            int numWords = j - i;
+            int gaps = numWords - 1;
+            string line = "";
+
+            if (j == n || gaps == 0) {
+                for (int k = i; k < j; k++) {
+                    line += words[k];
+                    if (k < j - 1) {
+                        line += " ";
+                    }
+                }
+                line += string(maxWidth - line.length(), ' ');
+            } else {
+                int totalChars = 0;
+                for (int k = i; k < j; k++) {
+                    totalChars += words[k].length();
+                }
+
+                int totalSpaces = maxWidth - totalChars;
+                int spacesPerGap = totalSpaces / gaps;
+                int extraSpaces = totalSpaces % gaps;
+
+                for (int k = i; k < j; k++) {
+                    line += words[k];
+                    if (k < j - 1) {
+                        int spacesToApply = spacesPerGap + ((k - i) < extraSpaces ? 1 : 0);
+                        line += string(spacesToApply, ' ');
+                    }
+                }
+            }
+
+            result.push_back(line);
+            i = j;
         }
 
-        return dp[n - 1];
+        return result;
     }
 };
+
+void printLines(const vector<string>& lines) {
+    cout << "[\n";
+    for (const string& line : lines) {
+        cout << "  \"" << line << "\"\n";
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    vector<vector<int>> grid1 = {
-        {1, 3, 1},
-        {1, 5, 1},
-        {4, 2, 1}
-    };
-    cout << "Example 1 Output: " << sol.minPathSum(grid1) << " (Expected: 7)\n";
+    vector<string> words1 = {"This", "is", "an", "example", "of", "text", "justification."};
+    cout << "Example 1 Output:\n";
+    printLines(sol.fullJustify(words1, 16));
 
-    vector<vector<int>> grid2 = {
-        {1, 2, 3},
-        {4, 5, 6}
-    };
-    cout << "Example 2 Output: " << sol.minPathSum(grid2) << " (Expected: 12)\n";
+    vector<string> words2 = {"What", "must", "be", "acknowledgment", "shall", "be"};
+    cout << "\nExample 2 Output:\n";
+    printLines(sol.fullJustify(words2, 16));
 
     return 0;
 }
