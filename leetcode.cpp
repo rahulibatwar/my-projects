@@ -1,82 +1,40 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    vector<string> fullJustify(vector<string>& words, int maxWidth) {
-        vector<string> result;
-        int n = words.size();
-        int i = 0;
+    int numDistinct(string s, string t) {
+        int m = s.length();
+        int n = t.length();
 
-        while (i < n) {
-            int j = i + 1;
-            int lineLength = words[i].length();
+        if (m < n) return 0;
 
-            while (j < n && lineLength + 1 + words[j].length() <= maxWidth) {
-                lineLength += 1 + words[j].length();
-                j++;
-            }
+        vector<unsigned long long> dp(n + 1, 0);
+        dp[0] = 1;
 
-            int numWords = j - i;
-            int gaps = numWords - 1;
-            string line = "";
-
-            if (j == n || gaps == 0) {
-                for (int k = i; k < j; k++) {
-                    line += words[k];
-                    if (k < j - 1) {
-                        line += " ";
-                    }
-                }
-                line += string(maxWidth - line.length(), ' ');
-            } else {
-                int totalChars = 0;
-                for (int k = i; k < j; k++) {
-                    totalChars += words[k].length();
-                }
-
-                int totalSpaces = maxWidth - totalChars;
-                int spacesPerGap = totalSpaces / gaps;
-                int extraSpaces = totalSpaces % gaps;
-
-                for (int k = i; k < j; k++) {
-                    line += words[k];
-                    if (k < j - 1) {
-                        int spacesToApply = spacesPerGap + ((k - i) < extraSpaces ? 1 : 0);
-                        line += string(spacesToApply, ' ');
-                    }
+        for (int i = 0; i < m; i++) {
+            for (int j = n; j >= 1; j--) {
+                if (s[i] == t[j - 1]) {
+                    dp[j] += dp[j - 1];
                 }
             }
-
-            result.push_back(line);
-            i = j;
         }
 
-        return result;
+        return static_cast<int>(dp[n]);
     }
 };
-
-void printLines(const vector<string>& lines) {
-    cout << "[\n";
-    for (const string& line : lines) {
-        cout << "  \"" << line << "\"\n";
-    }
-    cout << "]\n";
-}
 
 int main() {
     Solution sol;
 
-    vector<string> words1 = {"This", "is", "an", "example", "of", "text", "justification."};
-    cout << "Example 1 Output:\n";
-    printLines(sol.fullJustify(words1, 16));
+    cout << "Example 1 (\"rabbbit\", \"rabbit\"): " 
+         << sol.numDistinct("rabbbit", "rabbit") << " (Expected: 3)\n";
 
-    vector<string> words2 = {"What", "must", "be", "acknowledgment", "shall", "be"};
-    cout << "\nExample 2 Output:\n";
-    printLines(sol.fullJustify(words2, 16));
+    cout << "Example 2 (\"babgbag\", \"bag\"): " 
+         << sol.numDistinct("babgbag", "bag") << " (Expected: 5)\n";
 
     return 0;
 }
