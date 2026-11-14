@@ -1,40 +1,52 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
 class Solution {
 public:
-    int numDistinct(string s, string t) {
-        int m = s.length();
-        int n = t.length();
+    string simplifyPath(string path) {
+        vector<string> stack;
+        stringstream ss(path);
+        string token;
 
-        if (m < n) return 0;
-
-        vector<unsigned long long> dp(n + 1, 0);
-        dp[0] = 1;
-
-        for (int i = 0; i < m; i++) {
-            for (int j = n; j >= 1; j--) {
-                if (s[i] == t[j - 1]) {
-                    dp[j] += dp[j - 1];
+        while (getline(ss, token, '/')) {
+            if (token == "" || token == ".") {
+                continue;
+            } else if (token == "..") {
+                if (!stack.empty()) {
+                    stack.pop_back();
                 }
+            } else {
+                stack.push_back(token);
             }
         }
 
-        return static_cast<int>(dp[n]);
+        if (stack.empty()) {
+            return "/";
+        }
+
+        string simplified = "";
+        for (const string& dir : stack) {
+            simplified += "/" + dir;
+        }
+
+        return simplified;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (\"rabbbit\", \"rabbit\"): " 
-         << sol.numDistinct("rabbbit", "rabbit") << " (Expected: 3)\n";
-
-    cout << "Example 2 (\"babgbag\", \"bag\"): " 
-         << sol.numDistinct("babgbag", "bag") << " (Expected: 5)\n";
+    cout << "Example 1 (\"/home/\"): " << sol.simplifyPath("/home/") << " (Expected: /home)\n";[cite: 27, 28]
+    cout << "Example 2 (\"/home//foo/\"): " << sol.simplifyPath("/home//foo/") << " (Expected: /home/foo)\n";[cite: 27, 28]
+    cout << "Example 3 (\"/home/user/Documents/../Pictures\"): " 
+         << sol.simplifyPath("/home/user/Documents/../Pictures") << " (Expected: /home/user/Pictures)\n";
+    cout << "Example 4 (\"/../\"): " << sol.simplifyPath("/../") << " (Expected: /)\n";
+    cout << "Example 5 (\"/.../a/../b/c/../d/./\"): " 
+         << sol.simplifyPath("/.../a/../b/c/../d/./") << " (Expected: /.../b/d)\n";
 
     return 0;
 }
