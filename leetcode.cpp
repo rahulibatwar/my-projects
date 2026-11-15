@@ -1,52 +1,65 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
+#include <unordered_map>
 
 using namespace std;
 
 class Solution {
-public:
-    string simplifyPath(string path) {
-        vector<string> stack;
-        stringstream ss(path);
-        string token;
+private:
+    unordered_map<string, bool> memo;
 
-        while (getline(ss, token, '/')) {
-            if (token == "" || token == ".") {
-                continue;
-            } else if (token == "..") {
-                if (!stack.empty()) {
-                    stack.pop_back();
-                }
-            } else {
-                stack.push_back(token);
+public:
+    bool isScramble(string s1, string s2) {
+        if (s1 == s2) return true;
+        if (s1.length() != s2.length()) return false;
+
+        string key = s1 + "#" + s2;
+        if (memo.find(key) != memo.end()) {
+            return memo[key];
+        }
+
+        int n = s1.length();
+
+        vector<int> count(26, 0);
+        for (int i = 0; i < n; i++) {
+            count[s1[i] - 'a']++;
+            count[s2[i] - 'a']--;
+        }
+        for (int c : count) {
+            if (c != 0) {
+                return memo[key] = false;
             }
         }
 
-        if (stack.empty()) {
-            return "/";
+        for (int i = 1; i < n; i++) {
+            if (isScramble(s1.substr(0, i), s2.substr(0, i)) &&
+                isScramble(s1.substr(i), s2.substr(i))) {
+                return memo[key] = true;
+            }
+
+            if (isScramble(s1.substr(0, i), s2.substr(n - i, i)) &&
+                isScramble(s1.substr(i), s2.substr(0, n - i))) {
+                return memo[key] = true;
+            }
         }
 
-        string simplified = "";
-        for (const string& dir : stack) {
-            simplified += "/" + dir;
-        }
-
-        return simplified;
+        return memo[key] = false;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (\"/home/\"): " << sol.simplifyPath("/home/") << " (Expected: /home)\n";[cite: 27, 28]
-    cout << "Example 2 (\"/home//foo/\"): " << sol.simplifyPath("/home//foo/") << " (Expected: /home/foo)\n";[cite: 27, 28]
-    cout << "Example 3 (\"/home/user/Documents/../Pictures\"): " 
-         << sol.simplifyPath("/home/user/Documents/../Pictures") << " (Expected: /home/user/Pictures)\n";
-    cout << "Example 4 (\"/../\"): " << sol.simplifyPath("/../") << " (Expected: /)\n";
-    cout << "Example 5 (\"/.../a/../b/c/../d/./\"): " 
-         << sol.simplifyPath("/.../a/../b/c/../d/./") << " (Expected: /.../b/d)\n";
+    cout << boolalpha;
+    cout << "Example 1 (\"great\", \"rgeat\"): " 
+         << sol.isScramble("great", "rgeat") << " (Expected: true)\n";[cite: 28]
+
+    cout << "Example 2 (\"abcde\", \"caebd\"): " 
+         << sol.isScramble("abcde", "caebd") << " (Expected: false)\n";[cite: 28]
+
+    cout << "Example 3 (\"a\", \"a\"): " 
+         << sol.isScramble("a", "a") << " (Expected: true)\n";[cite: 28]
 
     return 0;
 }
