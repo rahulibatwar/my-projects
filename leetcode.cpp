@@ -1,65 +1,94 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <unordered_map>
 
 using namespace std;
 
 class Solution {
-private:
-    unordered_map<string, bool> memo;
-
 public:
-    bool isScramble(string s1, string s2) {
-        if (s1 == s2) return true;
-        if (s1.length() != s2.length()) return false;
+    void setZeroes(vector<vector<int>>& matrix) {
+        int m = matrix.size();
+        int n = matrix[0].size();
 
-        string key = s1 + "#" + s2;
-        if (memo.find(key) != memo.end()) {
-            return memo[key];
-        }
+        bool firstRowZero = false;
+        bool firstColZero = false;
 
-        int n = s1.length();
-
-        vector<int> count(26, 0);
-        for (int i = 0; i < n; i++) {
-            count[s1[i] - 'a']++;
-            count[s2[i] - 'a']--;
-        }
-        for (int c : count) {
-            if (c != 0) {
-                return memo[key] = false;
+        for (int i = 0; i < m; i++) {
+            if (matrix[i][0] == 0) {
+                firstColZero = true;
+                break;
             }
         }
 
-        for (int i = 1; i < n; i++) {
-            if (isScramble(s1.substr(0, i), s2.substr(0, i)) &&
-                isScramble(s1.substr(i), s2.substr(i))) {
-                return memo[key] = true;
-            }
-
-            if (isScramble(s1.substr(0, i), s2.substr(n - i, i)) &&
-                isScramble(s1.substr(i), s2.substr(0, n - i))) {
-                return memo[key] = true;
+        for (int j = 0; j < n; j++) {
+            if (matrix[0][j] == 0) {
+                firstRowZero = true;
+                break;
             }
         }
 
-        return memo[key] = false;
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (matrix[i][j] == 0) {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+
+        if (firstColZero) {
+            for (int i = 0; i < m; i++) {
+                matrix[i][0] = 0;
+            }
+        }
+
+        if (firstRowZero) {
+            for (int j = 0; j < n; j++) {
+                matrix[0][j] = 0;
+            }
+        }
     }
 };
+
+void printMatrix(const vector<vector<int>>& mat) {
+    cout << "[\n";
+    for (const auto& row : mat) {
+        cout << "  [ ";
+        for (int val : row) {
+            cout << val << " ";
+        }
+        cout << "]\n";
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    cout << boolalpha;
-    cout << "Example 1 (\"great\", \"rgeat\"): " 
-         << sol.isScramble("great", "rgeat") << " (Expected: true)\n";[cite: 28]
+    vector<vector<int>> mat1 = {
+        {1, 1, 1},
+        {1, 0, 1},
+        {1, 1, 1}
+    };
+    sol.setZeroes(mat1);
+    cout << "Example 1 Output:\n";
+    printMatrix(mat1); // Expected: [[1,0,1],[0,0,0],[1,0,1]][cite: 20]
 
-    cout << "Example 2 (\"abcde\", \"caebd\"): " 
-         << sol.isScramble("abcde", "caebd") << " (Expected: false)\n";[cite: 28]
-
-    cout << "Example 3 (\"a\", \"a\"): " 
-         << sol.isScramble("a", "a") << " (Expected: true)\n";[cite: 28]
+    vector<vector<int>> mat2 = {
+        {0, 1, 2, 0},
+        {3, 4, 5, 2},
+        {1, 3, 1, 5}
+    };
+    sol.setZeroes(mat2);
+    cout << "\nExample 2 Output:\n";
+    printMatrix(mat2); // Expected: [[0,0,0,0],[0,4,5,0],[0,3,1,0]][cite: 20]
 
     return 0;
 }
