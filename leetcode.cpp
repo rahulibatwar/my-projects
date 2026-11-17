@@ -1,70 +1,97 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <unordered_set>
+#include <unordered_map>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
+private:
+    void backtrack(const string& word, const string& beginWord,
+                   unordered_map<string, vector<string>>& parents,
+                   vector<string>& currentPath,
+                   vector<vector<string>>& results) {
+        if (word == beginWord) {
+            vector<string> validPath = currentPath;
+            reverse(validPath.begin(), validPath.end());
+            results.push_back(validPath);
+            return;
+        }
+
+        for (const string& p : parents[word]) {
+            currentPath.push_back(p);
+            backtrack(p, beginWord, parents, currentPath, results);
+            currentPath.pop_back();
+        }
+    }
+
 public:
-    void setZeroes(vector<vector<int>>& matrix) {
-        int m = matrix.size();
-        int n = matrix[0].size();
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> dict(wordList.begin(), wordList.end());
+        vector<vector<string>> results;
 
-        bool firstRowZero = false;
-        bool firstColZero = false;
-
-        for (int i = 0; i < m; i++) {
-            if (matrix[i][0] == 0) {
-                firstColZero = true;
-                break;
-            }
+        if (dict.find(endWord) == dict.end()) {
+            return results;
         }
 
-        for (int j = 0; j < n; j++) {
-            if (matrix[0][j] == 0) {
-                firstRowZero = true;
-                break;
-            }
-        }
+        dict.erase(beginWord);
 
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                if (matrix[i][j] == 0) {
-                    matrix[i][0] = 0;
-                    matrix[0][j] = 0;
+        unordered_map<string, vector<string>> parents;
+        unordered_set<string> currentLevel;
+        currentLevel.insert(beginWord);
+
+        bool found = false;
+        int wordLen = beginWord.length();
+
+        while (!currentLevel.empty() && !found) {
+            unordered_set<string> nextLevel;
+
+            for (const string& word : currentLevel) {
+                string temp = word;
+                for (int i = 0; i < wordLen; i++) {
+                    char originalChar = temp[i];
+                    for (char c = 'a'; c <= 'z'; c++) {
+                        if (c == originalChar) continue;
+                        temp[i] = c;
+
+                        if (dict.find(temp) != dict.end()) {
+                            nextLevel.insert(temp);
+                            parents[temp].push_back(word);
+                            if (temp == endWord) {
+                                found = true;
+                            }
+                        }
+                    }
+                    temp[i] = originalChar;
                 }
             }
+
+            for (const string& w : nextLevel) {
+                dict.erase(w);
+            }
+
+            currentLevel = nextLevel;
         }
 
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                if (matrix[i][0] == 0 || matrix[0][j] == 0) {
-                    matrix[i][j] = 0;
-                }
-            }
+        if (found) {
+            vector<string> currentPath = {endWord};
+            backtrack(endWord, beginWord, parents, currentPath, results);
         }
 
-        if (firstColZero) {
-            for (int i = 0; i < m; i++) {
-                matrix[i][0] = 0;
-            }
-        }
-
-        if (firstRowZero) {
-            for (int j = 0; j < n; j++) {
-                matrix[0][j] = 0;
-            }
-        }
+        return results;
     }
 };
 
-void printMatrix(const vector<vector<int>>& mat) {
+void printResults(const vector<vector<string>>& res) {
     cout << "[\n";
-    for (const auto& row : mat) {
+    for (const auto& path : res) {
         cout << "  [ ";
-        for (int val : row) {
-            cout << val << " ";
+        for (size_t i = 0; i < path.size(); i++) {
+            cout << "\"" << path[i] << "\"" << (i + 1 < path.size() ? ", " : "");
         }
-        cout << "]\n";
+        cout << " ]\n";
     }
     cout << "]\n";
 }
@@ -72,23 +99,13 @@ void printMatrix(const vector<vector<int>>& mat) {
 int main() {
     Solution sol;
 
-    vector<vector<int>> mat1 = {
-        {1, 1, 1},
-        {1, 0, 1},
-        {1, 1, 1}
-    };
-    sol.setZeroes(mat1);
+    vector<string> list1 = {"hot", "dot", "dog", "lot", "log", "cog"}; //[cite: 21]
     cout << "Example 1 Output:\n";
-    printMatrix(mat1); // Expected: [[1,0,1],[0,0,0],[1,0,1]][cite: 20]
+    printResults(sol.findLadders("hit", "cog", list1));
 
-    vector<vector<int>> mat2 = {
-        {0, 1, 2, 0},
-        {3, 4, 5, 2},
-        {1, 3, 1, 5}
-    };
-    sol.setZeroes(mat2);
+    vector<string> list2 = {"hot", "dot", "dog", "lot", "log"}; //[cite: 21]
     cout << "\nExample 2 Output:\n";
-    printMatrix(mat2); // Expected: [[0,0,0,0],[0,4,5,0],[0,3,1,0]][cite: 20]
+    printResults(sol.findLadders("hit", "cog", list2));
 
     return 0;
 }
