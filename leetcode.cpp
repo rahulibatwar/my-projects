@@ -1,51 +1,51 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
 class Solution {
+private:
+    void backtrack(int start, const vector<int>& nums, vector<int>& current, vector<vector<int>>& result) {
+        result.push_back(current);
+
+        for (int i = start; i < nums.size(); i++) {
+            current.push_back(nums[i]);
+            backtrack(i + 1, nums, current, result);
+            current.pop_back();
+        }
+    }
+
 public:
-    int minDistance(string word1, string word2) {
-        int m = word1.length();
-        int n = word2.length();
-
-        vector<int> dp(n + 1, 0);
-
-        for (int j = 0; j <= n; j++) {
-            dp[j] = j;
-        }
-
-        for (int i = 1; i <= m; i++) {
-            int prevDiag = dp[0];
-            dp[0] = i;
-
-            for (int j = 1; j <= n; j++) {
-                int temp = dp[j];
-
-                if (word1[i - 1] == word2[j - 1]) {
-                    dp[j] = prevDiag;
-                } else {
-                    dp[j] = 1 + min({dp[j], dp[j - 1], prevDiag});
-                }
-
-                prevDiag = temp;
-            }
-        }
-
-        return dp[n];
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<vector<int>> result;
+        vector<int> current;
+        backtrack(0, nums, current, result);
+        return result;
     }
 };
+
+void printSubsets(const vector<vector<int>>& res) {
+    cout << "[ ";
+    for (size_t i = 0; i < res.size(); i++) {
+        cout << "[";
+        for (size_t j = 0; j < res[i].size(); j++) {
+            cout << res[i][j] << (j + 1 < res[i].size() ? "," : "");
+        }
+        cout << "]" << (i + 1 < res.size() ? ", " : " ");
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (\"horse\", \"ros\"): " 
-         << sol.minDistance("horse", "ros") << " (Expected: 3)\n";[cite: 22]
+    vector<int> nums1 = {1, 2, 3};
+    cout << "Example 1 Output: ";
+    printSubsets(sol.subsets(nums1));
 
-    cout << "Example 2 (\"intention\", \"execution\"): " 
-         << sol.minDistance("intention", "execution") << " (Expected: 5)\n";[cite: 22]
+    vector<int> nums2 = {0};
+    cout << "Example 2 Output: ";
+    printSubsets(sol.subsets(nums2));
 
     return 0;
 }
