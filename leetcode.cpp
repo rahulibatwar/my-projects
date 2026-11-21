@@ -1,50 +1,40 @@
 #include <iostream>
-#include <string>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
-    int numDecodings(string s) {
-        if (s.empty() || s[0] == '0') {
-            return 0;
+    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
+        int totalSurplus = 0;
+        int currentTank = 0;
+        int startIndex = 0;
+
+        for (int i = 0; i < gas.size(); i++) {
+            int diff = gas[i] - cost[i];
+            totalSurplus += diff;
+            currentTank += diff;
+
+            if (currentTank < 0) {
+                startIndex = i + 1;
+                currentTank = 0;
+            }
         }
 
-        int n = s.length();
-        int prev2 = 1;
-        int prev1 = 1;
-
-        for (int i = 1; i < n; i++) {
-            int current = 0;
-
-            if (s[i] != '0') {
-                current += prev1;
-            }
-
-            int twoDigit = (s[i - 1] - '0') * 10 + (s[i] - '0');
-            if (twoDigit >= 10 && twoDigit <= 26) {
-                current += prev2;
-            }
-
-            if (current == 0) {
-                return 0;
-            }
-
-            prev2 = prev1;
-            prev1 = current;
-        }
-
-        return prev1;
+        return (totalSurplus >= 0) ? startIndex : -1;
     }
 };
 
 int main() {
     Solution sol;
 
-    cout << "Example 1 (\"12\"): " << sol.numDecodings("12") << " (Expected: 2)\n";[cite: 24]
-    cout << "Example 2 (\"226\"): " << sol.numDecodings("226") << " (Expected: 3)\n";
-    cout << "Example 3 (\"06\"): " << sol.numDecodings("06") << " (Expected: 0)\n";[cite: 24]
-    cout << "Test 4 (\"11106\"): " << sol.numDecodings("11106") << " (Expected: 2)\n";[cite: 24]
+    vector<int> gas1 = {1, 2, 3, 4, 5};
+    vector<int> cost1 = {3, 4, 5, 1, 2};
+    cout << "Example 1 Output: " << sol.canCompleteCircuit(gas1, cost1) << " (Expected: 3)\n";[cite: 25]
+
+    vector<int> gas2 = {2, 3, 4};
+    vector<int> cost2 = {3, 4, 3};
+    cout << "Example 2 Output: " << sol.canCompleteCircuit(gas2, cost2) << " (Expected: -1)\n";[cite: 25]
 
     return 0;
 }
