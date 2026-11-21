@@ -1,40 +1,62 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
 class Solution {
+private:
+    bool dfs(vector<vector<char>>& board, const string& word, int r, int c, int index) {
+        if (index == word.length()) {
+            return true;
+        }
+
+        if (r < 0 || r >= board.size() || c < 0 || c >= board[0].size() || board[r][c] != word[index]) {
+            return false;
+        }
+
+        char temp = board[r][c];
+        board[r][c] = '#';
+
+        bool found = dfs(board, word, r + 1, c, index + 1) ||
+                     dfs(board, word, r - 1, c, index + 1) ||
+                     dfs(board, word, r, c + 1, index + 1) ||
+                     dfs(board, word, r, c - 1, index + 1);
+
+        board[r][c] = temp;
+        return found;
+    }
+
 public:
-    int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
-        int totalSurplus = 0;
-        int currentTank = 0;
-        int startIndex = 0;
+    bool exist(vector<vector<char>>& board, string word) {
+        int m = board.size();
+        int n = board[0].size();
 
-        for (int i = 0; i < gas.size(); i++) {
-            int diff = gas[i] - cost[i];
-            totalSurplus += diff;
-            currentTank += diff;
-
-            if (currentTank < 0) {
-                startIndex = i + 1;
-                currentTank = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == word[0] && dfs(board, word, i, j, 0)) {
+                    return true;
+                }
             }
         }
 
-        return (totalSurplus >= 0) ? startIndex : -1;
+        return false;
     }
 };
 
 int main() {
     Solution sol;
 
-    vector<int> gas1 = {1, 2, 3, 4, 5};
-    vector<int> cost1 = {3, 4, 5, 1, 2};
-    cout << "Example 1 Output: " << sol.canCompleteCircuit(gas1, cost1) << " (Expected: 3)\n";[cite: 25]
+    vector<vector<char>> board = {
+        {'A', 'B', 'C', 'E'},
+        {'S', 'F', 'C', 'S'},
+        {'A', 'D', 'E', 'E'}
+    };[cite: 26]
 
-    vector<int> gas2 = {2, 3, 4};
-    vector<int> cost2 = {3, 4, 3};
-    cout << "Example 2 Output: " << sol.canCompleteCircuit(gas2, cost2) << " (Expected: -1)\n";[cite: 25]
+    cout << boolalpha;
+    cout << "Example 1 (\"ABCCED\"): " << sol.exist(board, "ABCCED") << " (Expected: true)\n";[cite: 26]
+    cout << "Example 2 (\"SEE\"): " << sol.exist(board, "SEE") << " (Expected: true)\n";[cite: 26]
+    cout << "Example 3 (\"ABCB\"): " << sol.exist(board, "ABCB") << " (Expected: false)\n";
 
     return 0;
 }
