@@ -1,62 +1,82 @@
 #include <iostream>
 #include <vector>
-#include <string>
 
 using namespace std;
 
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
 class Solution {
-private:
-    bool dfs(vector<vector<char>>& board, const string& word, int r, int c, int index) {
-        if (index == word.length()) {
-            return true;
-        }
-
-        if (r < 0 || r >= board.size() || c < 0 || c >= board[0].size() || board[r][c] != word[index]) {
-            return false;
-        }
-
-        char temp = board[r][c];
-        board[r][c] = '#';
-
-        bool found = dfs(board, word, r + 1, c, index + 1) ||
-                     dfs(board, word, r - 1, c, index + 1) ||
-                     dfs(board, word, r, c + 1, index + 1) ||
-                     dfs(board, word, r, c - 1, index + 1);
-
-        board[r][c] = temp;
-        return found;
-    }
-
 public:
-    bool exist(vector<vector<char>>& board, string word) {
-        int m = board.size();
-        int n = board[0].size();
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (board[i][j] == word[0] && dfs(board, word, i, j, 0)) {
-                    return true;
-                }
-            }
+    ListNode* insertionSortList(ListNode* head) {
+        if (!head || !head->next) {
+            return head;
         }
 
-        return false;
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* lastSorted = head;
+        ListNode* curr = head->next;
+
+        while (curr != nullptr) {
+            if (lastSorted->val <= curr->val) {
+                lastSorted = lastSorted->next;
+            } else {
+                ListNode* prev = dummy;
+                while (prev->next->val <= curr->val) {
+                    prev = prev->next;
+                }
+
+                lastSorted->next = curr->next;
+                curr->next = prev->next;
+                prev->next = curr;
+            }
+            curr = lastSorted->next;
+        }
+
+        ListNode* sortedHead = dummy->next;
+        delete dummy;
+        return sortedHead;
     }
 };
+
+ListNode* createList(const vector<int>& vals) {
+    if (vals.empty()) return nullptr;
+    ListNode* head = new ListNode(vals[0]);
+    ListNode* curr = head;
+    for (size_t i = 1; i < vals.size(); i++) {
+        curr->next = new ListNode(vals[i]);
+        curr = curr->next;
+    }
+    return head;
+}
+
+void printList(ListNode* head) {
+    cout << "[ ";
+    while (head != nullptr) {
+        cout << head->val << " ";
+        head = head->next;
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    vector<vector<char>> board = {
-        {'A', 'B', 'C', 'E'},
-        {'S', 'F', 'C', 'S'},
-        {'A', 'D', 'E', 'E'}
-    };[cite: 26]
+    ListNode* list1 = createList({4, 2, 1, 3});
+    ListNode* sorted1 = sol.insertionSortList(list1);
+    cout << "Example 1 Output: ";
+    printList(sorted1); // Expected: [ 1 2 3 4 ]
 
-    cout << boolalpha;
-    cout << "Example 1 (\"ABCCED\"): " << sol.exist(board, "ABCCED") << " (Expected: true)\n";[cite: 26]
-    cout << "Example 2 (\"SEE\"): " << sol.exist(board, "SEE") << " (Expected: true)\n";[cite: 26]
-    cout << "Example 3 (\"ABCB\"): " << sol.exist(board, "ABCB") << " (Expected: false)\n";
+    ListNode* list2 = createList({-1, 5, 3, 4, 0});
+    ListNode* sorted2 = sol.insertionSortList(list2);
+    cout << "Example 2 Output: ";
+    printList(sorted2); // Expected: [ -1 0 3 4 5 ]
 
     return 0;
 }
