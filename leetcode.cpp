@@ -1,66 +1,77 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <queue>
+#include <iomanip>
 
 using namespace std;
 
-struct ListNode {
-    int val;
-    ListNode *next;
-    ListNode() : val(0), next(nullptr) {}
-    ListNode(int x) : val(x), next(nullptr) {}
-    ListNode(int x, ListNode *next) : val(x), next(next) {}
-};
-
 class Solution {
-public:
-    ListNode* insertionSortList(ListNode* head) {
-        if (!head || !head->next) {
-            return head;
+private:
+    double bfs(const string& start, const string& end,
+               unordered_map<string, vector<pair<string, double>>>& graph) {
+        if (graph.find(start) == graph.end() || graph.find(end) == graph.end()) {
+            return -1.0;
+        }
+        if (start == end) {
+            return 1.0;
         }
 
-        ListNode* dummy = new ListNode(0);
-        dummy->next = head;
-        ListNode* lastSorted = head;
-        ListNode* curr = head->next;
+        queue<pair<string, double>> q;
+        unordered_set<string> visited;
 
-        while (curr != nullptr) {
-            if (lastSorted->val <= curr->val) {
-                lastSorted = lastSorted->next;
-            } else {
-                ListNode* prev = dummy;
-                while (prev->next->val <= curr->val) {
-                    prev = prev->next;
-                }
+        q.push({start, 1.0});
+        visited.insert(start);
 
-                lastSorted->next = curr->next;
-                curr->next = prev->next;
-                prev->next = curr;
+        while (!q.empty()) {
+            auto [currNode, currProduct] = q.front();
+            q.pop();
+
+            if (currNode == end) {
+                return currProduct;
             }
-            curr = lastSorted->next;
+
+            for (const auto& [neighbor, weight] : graph[currNode]) {
+                if (visited.find(neighbor) == visited.end()) {
+                    visited.insert(neighbor);
+                    q.push({neighbor, currProduct * weight});
+                }
+            }
         }
 
-        ListNode* sortedHead = dummy->next;
-        delete dummy;
-        return sortedHead;
+        return -1.0;
+    }
+
+public:
+    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+        unordered_map<string, vector<pair<string, double>>> graph;
+
+        for (size_t i = 0; i < equations.size(); i++) {
+            const string& u = equations[i][0];
+            const string& v = equations[i][1];
+            double val = values[i];
+
+            graph[u].push_back({v, val});
+            graph[v].push_back({u, 1.0 / val});
+        }
+
+        vector<double> results;
+        results.reserve(queries.size());
+
+        for (const auto& query : queries) {
+            results.push_back(bfs(query[0], query[1], graph));
+        }
+
+        return results;
     }
 };
 
-ListNode* createList(const vector<int>& vals) {
-    if (vals.empty()) return nullptr;
-    ListNode* head = new ListNode(vals[0]);
-    ListNode* curr = head;
-    for (size_t i = 1; i < vals.size(); i++) {
-        curr->next = new ListNode(vals[i]);
-        curr = curr->next;
-    }
-    return head;
-}
-
-void printList(ListNode* head) {
-    cout << "[ ";
-    while (head != nullptr) {
-        cout << head->val << " ";
-        head = head->next;
+void printResults(const vector<double>& res) {
+    cout << fixed << setprecision(5) << "[ ";
+    for (size_t i = 0; i < res.size(); i++) {
+        cout << res[i] << (i + 1 < res.size() ? ", " : " ");
     }
     cout << "]\n";
 }
@@ -68,15 +79,17 @@ void printList(ListNode* head) {
 int main() {
     Solution sol;
 
-    ListNode* list1 = createList({4, 2, 1, 3});
-    ListNode* sorted1 = sol.insertionSortList(list1);
+    vector<vector<string>> eq1 = {{"a", "b"}, {"b", "c"}};
+    vector<double> val1 = {2.0, 3.0};
+    vector<vector<string>> q1 = {{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}};
     cout << "Example 1 Output: ";
-    printList(sorted1); // Expected: [ 1 2 3 4 ]
+    printResults(sol.calcEquation(eq1, val1, q1)); // Expected: [ 6.00000, 0.50000, -1.00000, 1.00000, -1.00000 ][cite: 28]
 
-    ListNode* list2 = createList({-1, 5, 3, 4, 0});
-    ListNode* sorted2 = sol.insertionSortList(list2);
+    vector<vector<string>> eq2 = {{"a", "b"}, {"b", "c"}, {"bc", "cd"}};
+    vector<double> val2 = {1.5, 2.5, 5.0};
+    vector<vector<string>> q2 = {{"a", "c"}, {"c", "b"}, {"bc", "cd"}, {"cd", "bc"}};
     cout << "Example 2 Output: ";
-    printList(sorted2); // Expected: [ -1 0 3 4 5 ]
+    printResults(sol.calcEquation(eq2, val2, q2)); // Expected: [ 3.75000, 0.40000, 5.00000, 0.20000 ][cite: 28]
 
     return 0;
 }
