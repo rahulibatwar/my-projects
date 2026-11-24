@@ -1,95 +1,49 @@
 #include <iostream>
 #include <vector>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <iomanip>
 
 using namespace std;
 
 class Solution {
-private:
-    double bfs(const string& start, const string& end,
-               unordered_map<string, vector<pair<string, double>>>& graph) {
-        if (graph.find(start) == graph.end() || graph.find(end) == graph.end()) {
-            return -1.0;
-        }
-        if (start == end) {
-            return 1.0;
-        }
-
-        queue<pair<string, double>> q;
-        unordered_set<string> visited;
-
-        q.push({start, 1.0});
-        visited.insert(start);
-
-        while (!q.empty()) {
-            auto [currNode, currProduct] = q.front();
-            q.pop();
-
-            if (currNode == end) {
-                return currProduct;
-            }
-
-            for (const auto& [neighbor, weight] : graph[currNode]) {
-                if (visited.find(neighbor) == visited.end()) {
-                    visited.insert(neighbor);
-                    q.push({neighbor, currProduct * weight});
-                }
-            }
-        }
-
-        return -1.0;
-    }
-
 public:
-    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
-        unordered_map<string, vector<pair<string, double>>> graph;
-
-        for (size_t i = 0; i < equations.size(); i++) {
-            const string& u = equations[i][0];
-            const string& v = equations[i][1];
-            double val = values[i];
-
-            graph[u].push_back({v, val});
-            graph[v].push_back({u, 1.0 / val});
+    bool searchMatrix(vector<vector<int>>& matrix, int target) {
+        if (matrix.empty() || matrix[0].empty()) {
+            return false;
         }
 
-        vector<double> results;
-        results.reserve(queries.size());
+        int m = matrix.size();
+        int n = matrix[0].size();
+        int low = 0;
+        int high = m * n - 1;
 
-        for (const auto& query : queries) {
-            results.push_back(bfs(query[0], query[1], graph));
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            int midVal = matrix[mid / n][mid % n];
+
+            if (midVal == target) {
+                return true;
+            } else if (midVal < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
         }
 
-        return results;
+        return false;
     }
 };
-
-void printResults(const vector<double>& res) {
-    cout << fixed << setprecision(5) << "[ ";
-    for (size_t i = 0; i < res.size(); i++) {
-        cout << res[i] << (i + 1 < res.size() ? ", " : " ");
-    }
-    cout << "]\n";
-}
 
 int main() {
     Solution sol;
 
-    vector<vector<string>> eq1 = {{"a", "b"}, {"b", "c"}};
-    vector<double> val1 = {2.0, 3.0};
-    vector<vector<string>> q1 = {{"a", "c"}, {"b", "a"}, {"a", "e"}, {"a", "a"}, {"x", "x"}};
-    cout << "Example 1 Output: ";
-    printResults(sol.calcEquation(eq1, val1, q1)); // Expected: [ 6.00000, 0.50000, -1.00000, 1.00000, -1.00000 ][cite: 28]
+    vector<vector<int>> matrix = {
+        {1, 3, 5, 7},
+        {10, 11, 16, 20},
+        {23, 30, 34, 60}
+    };[cite: 28]
 
-    vector<vector<string>> eq2 = {{"a", "b"}, {"b", "c"}, {"bc", "cd"}};
-    vector<double> val2 = {1.5, 2.5, 5.0};
-    vector<vector<string>> q2 = {{"a", "c"}, {"c", "b"}, {"bc", "cd"}, {"cd", "bc"}};
-    cout << "Example 2 Output: ";
-    printResults(sol.calcEquation(eq2, val2, q2)); // Expected: [ 3.75000, 0.40000, 5.00000, 0.20000 ][cite: 28]
+    cout << boolalpha;
+    cout << "Example 1 (target = 3): " << sol.searchMatrix(matrix, 3) << " (Expected: true)\n";[cite: 28]
+    cout << "Example 2 (target = 13): " << sol.searchMatrix(matrix, 13) << " (Expected: false)\n";
 
     return 0;
 }
