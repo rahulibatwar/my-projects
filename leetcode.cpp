@@ -1,49 +1,96 @@
 #include <iostream>
 #include <vector>
+#include <stack>
 
 using namespace std;
 
-class Solution {
+// लोकल टेस्टिंग के लिए NestedInteger का Mock Implementation
+class NestedInteger {
+private:
+    bool is_int;
+    int val;
+    vector<NestedInteger> list;
+
 public:
-    bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        if (matrix.empty() || matrix[0].empty()) {
-            return false;
+    NestedInteger(int value) : is_int(true), val(value) {}
+    NestedInteger(vector<NestedInteger> nestedList) : is_int(false), val(0), list(nestedList) {}
+
+    bool isInteger() const {
+        return is_int;
+    }
+
+    int getInteger() const {
+        return val;
+    }
+
+    const vector<NestedInteger>& getList() const {
+        return list;
+    }
+};
+
+class NestedIterator {
+private:
+    stack<NestedInteger> st;
+
+public:
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        for (int i = nestedList.size() - 1; i >= 0; i--) {
+            st.push(nestedList[i]);
         }
-
-        int m = matrix.size();
-        int n = matrix[0].size();
-        int low = 0;
-        int high = m * n - 1;
-
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            int midVal = matrix[mid / n][mid % n];
-
-            if (midVal == target) {
+    }
+    
+    int next() {
+        hasNext();
+        int val = st.top().getInteger();
+        st.pop();
+        return val;
+    }
+    
+    bool hasNext() {
+        while (!st.empty()) {
+            if (st.top().isInteger()) {
                 return true;
-            } else if (midVal < target) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
+            }
+            vector<NestedInteger> currList = st.top().getList();
+            st.pop();
+            for (int i = currList.size() - 1; i >= 0; i--) {
+                st.push(currList[i]);
             }
         }
-
         return false;
     }
 };
 
 int main() {
-    Solution sol;
+    // Example 1: [[1,1], 2, [1,1]][cite: 28]
+    vector<NestedInteger> list1 = {
+        NestedInteger({NestedInteger(1), NestedInteger(1)}),
+        NestedInteger(2),
+        NestedInteger({NestedInteger(1), NestedInteger(1)})
+    };
 
-    vector<vector<int>> matrix = {
-        {1, 3, 5, 7},
-        {10, 11, 16, 20},
-        {23, 30, 34, 60}
-    };[cite: 28]
+    NestedIterator it1(list1);
+    cout << "Example 1 Output: [ ";
+    while (it1.hasNext()) {
+        cout << it1.next() << " ";
+    }
+    cout << "] (Expected: [ 1 1 2 1 1 ])\n"; //[cite: 28]
 
-    cout << boolalpha;
-    cout << "Example 1 (target = 3): " << sol.searchMatrix(matrix, 3) << " (Expected: true)\n";[cite: 28]
-    cout << "Example 2 (target = 13): " << sol.searchMatrix(matrix, 13) << " (Expected: false)\n";
+    // Example 2: [1, [4, [6]]][cite: 28]
+    vector<NestedInteger> list2 = {
+        NestedInteger(1),
+        NestedInteger({
+            NestedInteger(4),
+            NestedInteger({NestedInteger(6)})
+        })
+    };
+
+    NestedIterator it2(list2);
+    cout << "Example 2 Output: [ ";
+    while (it2.hasNext()) {
+        cout << it2.next() << " ";
+    }
+    cout << "] (Expected: [ 1 4 6 ])\n"; //[cite: 28]
 
     return 0;
 }
