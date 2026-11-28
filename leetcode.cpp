@@ -1,48 +1,43 @@
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <algorithm>
 
 using namespace std;
 
 class Solution {
 public:
-    int removeDuplicates(vector<int>& nums) {
-        int n = nums.size();
-        if (n <= 2) {
-            return n;
-        }
+    int largestRectangleArea(vector<int>& heights) {
+        int n = heights.size();
+        stack<int> st;
+        int maxArea = 0;
 
-        int k = 2;
-        for (int i = 2; i < n; i++) {
-            if (nums[i] != nums[k - 2]) {
-                nums[k] = nums[i];
-                k++;
+        for (int i = 0; i <= n; i++) {
+            int currHeight = (i == n) ? 0 : heights[i];
+
+            while (!st.empty() && currHeight < heights[st.top()]) {
+                int h = heights[st.top()];
+                st.pop();
+
+                int width = st.empty() ? i : (i - st.top() - 1);
+                maxArea = max(maxArea, h * width);
             }
+
+            st.push(i);
         }
 
-        return k;
+        return maxArea;
     }
 };
-
-void printPrefix(const vector<int>& nums, int k) {
-    cout << "k = " << k << ", nums = [ ";
-    for (int i = 0; i < k; i++) {
-        cout << nums[i] << (i + 1 < k ? ", " : " ");
-    }
-    cout << "]\n";
-}
 
 int main() {
     Solution sol;
 
-    vector<int> nums1 = {1, 1, 1, 2, 2, 3};
-    int k1 = sol.removeDuplicates(nums1);
-    cout << "Example 1 -> ";
-    printPrefix(nums1, k1); // Expected: k = 5, nums = [ 1, 1, 2, 2, 3 ]
+    vector<int> heights1 = {2, 1, 5, 6, 2, 3};
+    cout << "Example 1 Output: " << sol.largestRectangleArea(heights1) << " (Expected: 10)\n";[cite: 21]
 
-    vector<int> nums2 = {0, 0, 1, 1, 1, 1, 2, 3, 3};
-    int k2 = sol.removeDuplicates(nums2);
-    cout << "Example 2 -> ";
-    printPrefix(nums2, k2); // Expected: k = 7, nums = [ 0, 0, 1, 1, 2, 3, 3 ]
+    vector<int> heights2 = {2, 4};
+    cout << "Example 2 Output: " << sol.largestRectangleArea(heights2) << " (Expected: 4)\n";[cite: 21]
 
     return 0;
 }
