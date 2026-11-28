@@ -1,43 +1,57 @@
 #include <iostream>
 #include <vector>
-#include <stack>
 #include <algorithm>
 
 using namespace std;
 
 class Solution {
-public:
-    int largestRectangleArea(vector<int>& heights) {
-        int n = heights.size();
-        stack<int> st;
-        int maxArea = 0;
+private:
+    void backtrack(int start, const vector<int>& nums, vector<int>& current, vector<vector<int>>& result) {
+        result.push_back(current);
 
-        for (int i = 0; i <= n; i++) {
-            int currHeight = (i == n) ? 0 : heights[i];
-
-            while (!st.empty() && currHeight < heights[st.top()]) {
-                int h = heights[st.top()];
-                st.pop();
-
-                int width = st.empty() ? i : (i - st.top() - 1);
-                maxArea = max(maxArea, h * width);
+        for (int i = start; i < nums.size(); i++) {
+            if (i > start && nums[i] == nums[i - 1]) {
+                continue;
             }
 
-            st.push(i);
+            current.push_back(nums[i]);
+            backtrack(i + 1, nums, current, result);
+            current.pop_back();
         }
+    }
 
-        return maxArea;
+public:
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> result;
+        vector<int> current;
+        backtrack(0, nums, current, result);
+        return result;
     }
 };
+
+void printSubsets(const vector<vector<int>>& res) {
+    cout << "[ ";
+    for (size_t i = 0; i < res.size(); i++) {
+        cout << "[";
+        for (size_t j = 0; j < res[i].size(); j++) {
+            cout << res[i][j] << (j + 1 < res[i].size() ? "," : "");
+        }
+        cout << "]" << (i + 1 < res.size() ? ", " : " ");
+    }
+    cout << "]\n";
+}
 
 int main() {
     Solution sol;
 
-    vector<int> heights1 = {2, 1, 5, 6, 2, 3};
-    cout << "Example 1 Output: " << sol.largestRectangleArea(heights1) << " (Expected: 10)\n";[cite: 21]
+    vector<int> nums1 = {1, 2, 2};
+    cout << "Example 1 Output: ";
+    printSubsets(sol.subsetsWithDup(nums1)); // Expected: [ [], [1], [1,2], [1,2,2], [2], [2,2] ]
 
-    vector<int> heights2 = {2, 4};
-    cout << "Example 2 Output: " << sol.largestRectangleArea(heights2) << " (Expected: 4)\n";[cite: 21]
+    vector<int> nums2 = {0};
+    cout << "Example 2 Output: ";
+    printSubsets(sol.subsetsWithDup(nums2)); // Expected: [ [], [0] ]
 
     return 0;
 }
